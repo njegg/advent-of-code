@@ -18,10 +18,8 @@ void main(int argc) {
 	char word[16];
 	int move;
 
-	while(fscanf(fp, "%s ", word) != EOF) {
-
-		fscanf(fp, "%i", &move);
-
+	while(fscanf(fp, "%s %i", word, &move) != EOF) {
+		
 		if (word[0] == 'f') {
 			x += move;
 			y += aim * move;
