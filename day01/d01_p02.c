@@ -21,7 +21,7 @@ int sum_and_shift(int* window)
 
 void main(void)
 {
-    FILE *fp = fopen("day01_input", "r");
+    FILE *fp = fopen("d01_input", "r");
 
 	int incs = 0;	
     int sum_a = 0, sum_b = 0;

@@ -2,7 +2,7 @@
 
 void main(void) {
 
-	FILE *fp = fopen("day01_input", "r");
+	FILE *fp = fopen("d01_input", "r");
 
 	int incs = 0;	
 
