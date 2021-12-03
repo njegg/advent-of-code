@@ -1,12 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define SHORT_INPUT "d03_short_input"
-#define INPUT	    "d03_input"
-
+#define INPUT "d03_input"
 
 int main(void) {
-	
+
 	FILE *fp = fopen(INPUT, "r");
 
 	if (fp == NULL) {
@@ -14,10 +12,9 @@ int main(void) {
 		return 1;
 	}
 
-
 	int bin_len = 12;
 
-	char *sum = calloc(bin_len, sizeof(int)); // allocates and zeros
+	int *sum = calloc(bin_len, sizeof(int)); // allocates and zeros
 	int digit;
 
 	while(!feof(fp)) {
@@ -30,16 +27,14 @@ int main(void) {
 
 	int gamma = 0, epsilon = 0;
 
-	int base = 1;
-	for (int i = bin_len - 1; i >= 0; i--) {
-		gamma   += (sum[i] >= 0) * base;
-		epsilon += (sum[i] <  0) * base;
-
-		base *= 2;
-	}
+	for (int i = 0; i < bin_len; i++)
+		gamma = (gamma << 1) ^ (sum[i] >= 0);
+	epsilon = ~gamma << (32-bin_len) >> (32-bin_len);
 	
+
 	printf("gamma = %i, epsilon = %i\n", gamma, epsilon);
 	printf("power consumption = %i", (gamma * epsilon));
+	// gamma = 2346, epsilon = 1749
 
 	fclose(fp);
 	free(sum);
