@@ -34,7 +34,6 @@ int main(void) {
 
 	printf("gamma = %i, epsilon = %i\n", gamma, epsilon);
 	printf("power consumption = %i", (gamma * epsilon));
-	// gamma = 2346, epsilon = 1749
 
 	fclose(fp);
 	free(sum);
