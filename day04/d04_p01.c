@@ -99,8 +99,6 @@ int main(void) {
 				}
 
 				if (row_sum == 5) {
-					int win_sum = 0;
-
 					int sum = board_sum(boards, i);
 					printf("win number = %i\n", draw);
 					printf("sum = %i\n", sum);
@@ -116,7 +114,6 @@ int main(void) {
 					printf("resault = %i\n", (sum * draw));
 					printf("sum = %i\n", sum);
 					printf("win number = %i\n", draw);
-
 					return 0;
 				}
 			}
@@ -133,6 +130,7 @@ int main(void) {
 int board_sum(int (*b)[5][5], int i) {
 
 	int resAult = 0;
+
 	for (int j = 0; j < 5; j++) {
 		for (int k = 0; k < 5; k++) {
 			int n = b[i][j][k];
@@ -144,6 +142,7 @@ int board_sum(int (*b)[5][5], int i) {
 
 
 int count_boards(FILE* fp) {
+	
 	int ans = 0;
 	char cur, prev;
 	

@@ -39,7 +39,6 @@ int main(int argc) {
 	int boards_left = board_count;
 	int* board_dead = calloc(board_count, sizeof(int));
 
-
 	int i = 0;
 	while (1) {
 
@@ -82,6 +81,7 @@ int main(int argc) {
 
 				// cheks row
 				if (row_sum == 5) {
+
 					if (boards_left > 1) {
 						boards_left--;
 						board_dead[i] = 1;
@@ -94,7 +94,6 @@ int main(int argc) {
 						return 0;
 					}
 				}
-
 			}
 
 			// checks all columns
@@ -106,6 +105,7 @@ int main(int argc) {
 				if (board_dead[i]) break;
 
 				if (col_sum[b] == 5) {
+
 					if (boards_left > 1) {
 						boards_left--;
 						board_dead[i] = 1;
@@ -134,17 +134,20 @@ int main(int argc) {
 int board_sum(int (*b)[5][5], int i) {
 
 	int resAult = 0;
+
 	for (int j = 0; j < 5; j++) {
 		for (int k = 0; k < 5; k++) {
 			int n = b[i][j][k];
 			if (n > 0) resAult += n;
 		}
 	}
+
 	return resAult; 
 }
 
 
 int count_boards(FILE* fp) {
+
 	int ans = 0;
 	char cur, prev;
 	
@@ -163,12 +166,10 @@ int count_boards(FILE* fp) {
 
 void print_boards_and_draws(int* draws, int draw_size, int (*boards)[5][5], int board_count) {
 
-	for (int i = 0; i < draw_size; i++) {
+	for (int i = 0; i < draw_size; i++)
 		printf("%i ", draws[i]);
-	}
 	printf("\n\n");
 	
-
 	for (int  i = 0; i < board_count; i++) {
 		for (int j = 0; j < 5; j++) {
 			for (int k = 0; k < 5; k++) {
@@ -180,4 +181,3 @@ void print_boards_and_draws(int* draws, int draw_size, int (*boards)[5][5], int 
 	}
 
 }
-
