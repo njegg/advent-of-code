@@ -14,7 +14,7 @@ int board_sum(int (*b)[5][5], int i);
 
 int main(void) {
 
-	FILE *fp = fopen(SHORT_INPUT, "r");
+	FILE *fp = fopen(INPUT, "r");
 
 	if (fp == NULL) {
 		printf("cant read file\n");

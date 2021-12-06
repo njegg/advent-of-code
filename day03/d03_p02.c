@@ -8,7 +8,6 @@
 // god forgive me for this disgusting peace of code
 
 int main(void) {
-    clock_t begin = clock();
 
     int input = 0;
 	
@@ -83,10 +82,6 @@ int main(void) {
     free(nums);
     fclose(fp);
 
-clock_t end = clock();
-double time_spent = (double)(end - begin) / 1000;
-
-printf("\n%f\n", time_spent);
 }
 
 /*
