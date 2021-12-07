@@ -50,7 +50,8 @@ int main(int ac) {
 
     int fuel_avg = 0, diff;
     for (int i = 0; i < crab_size; i++) {
-        fuel_avg += abs(crabs[i] - avg);
+        diff = abs(crabs[i] - avg);
+        fuel_avg += diff * (diff + 1 ) / 2;
     }
 
     int left = fuel(crabs, avg - 1, fuel_avg, -1);
@@ -68,7 +69,8 @@ int fuel(int* crabs, int pos, int prev, int dir) {
     int ans = 0;
 
     for (int i = 0; i < crab_size; i++) {
-        ans += abs(crabs[i] - pos);
+        int dif = abs(crabs[i] - pos);
+        ans += dif * (dif + 1) / 2;
     }
 
     if (prev < ans) return prev;
