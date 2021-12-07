@@ -26,7 +26,7 @@ int main(int ac) {
         if (fgetc(fp) == EOF) break;
     }
 
-    int days = 256;
+    int days = 1929; // limit before long overflow for my input
 
     for (int day = 1; day <= days; day++) {
 
@@ -45,8 +45,7 @@ int main(int ac) {
     }
 
     long ans = sum(timers);
-    printf("answer = %ld\n", ans);
-
+    printf("days = %i, fish = %ld\n", days, ans);
 }
 
 long sum(long* timers) {

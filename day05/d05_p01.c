@@ -91,5 +91,4 @@ int main(int ac) {
     int danger_zones = check_danger(map);
 
     printf("danger zones: %i\n", danger_zones);
-    
 }
