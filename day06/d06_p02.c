@@ -5,9 +5,7 @@
 #define SHORT_INPUT "d06_short_input"
 #define INPUT	    "d06_input"
 
-void print_timers(int* timers);
-void table();
-int sum(int* timers);
+long sum(long* timers);
 
 int main(int ac) {
     int input = ac > 1;
@@ -19,14 +17,7 @@ int main(int ac) {
         return 1;
 	}
 
-    /*
-        idea:
-        have a 10 element array that keeps the number of
-        fish for each timer level
-        10nth is for the timer 8 to wait a day
-    */  
-
-    int timers[10] = {0};
+    long timers[10] = {0};
 
     int n;
     while (1) {
@@ -35,9 +26,7 @@ int main(int ac) {
         if (fgetc(fp) == EOF) break;
     }
 
-    // table();
-        
-    int days = 80;
+    int days = 256;
 
     for (int day = 1; day <= days; day++) {
 
@@ -53,31 +42,17 @@ int main(int ac) {
                 timers[i] = 0;
             }
         }
-        // printf("after %i days: ", day);
-        // print_timers(timers);
     }
 
-    int ans = sum(timers);
-    printf("answer = %i\n", ans);
+    long ans = sum(timers);
+    printf("answer = %ld\n", ans);
 
 }
 
-int sum(int* timers) {
-    int sum = 0;
+long sum(long* timers) {
+    long sum = 0;
     for (int i = 0; i < 9; i++) {
         sum += timers[i];
     }
     return sum;
-}
-
-void print_timers(int* timers) {
-    for (int i = 0; i < 9; i++) {
-        printf("%3i ", timers[i]);
-    }
-    printf("\n");
-}
-
-void table(){
-    printf("                0   1   2   3   4   5   6   7   8\n");
-    printf("-------------------------------------------------\n");
 }

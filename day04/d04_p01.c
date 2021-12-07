@@ -55,7 +55,8 @@ int main(void) {
 	/*
 		notes
 		every match is flaged with negative value
-		of that number
+		of that number (update: this is useles, didn read
+		the problem right)
 		
 		for every drawn number, flag
 		them on the boards, while doing that
@@ -73,6 +74,7 @@ int main(void) {
 
 		problem: 0 cant be negative
 		solution: flag it with a min integer
+
 	*/
 
 	for (int d = 0; d < draw_size; d++) {
