@@ -14,7 +14,6 @@ void diff_str(char* longer, int l, char* shorter, char* diffs);
 // so when it decodes 'f' to 'a', 'a' is a the first bit
 // so a=1, b=2, c=4... now you can just add them together
 // to get the number
-
 void init_dispaly_values(int* display);
 int display[128];
 int values[7] = {1,2,4,8,16,32,64};
@@ -37,20 +36,14 @@ int main(int ac) {
     int count = 0;
     int sum = 0;
     for (int i = 0; i < lines; i++) {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++)
             fscanf(fp,"%s", patterns[i]);
-            printf("%s ", patterns[i]);
-        }
+
         fgetc(fp);
         fgetc(fp);
 
-        printf("| ");
-
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; i++)
             fscanf(fp, "%s", numbers[i]);
-            printf("%s ", numbers[i]);
-        }
-        printf("\n");
 
         sum += decode(patterns, numbers);
     }
