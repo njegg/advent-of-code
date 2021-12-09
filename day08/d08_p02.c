@@ -10,6 +10,9 @@ char diff(char* longer, int l, char* shorter);
 int num_commons(char* shorter, int s, char* longer);
 void diff_str(char* longer, int l, char* shorter, char* diffs);
 
+// update: i was dumb and blind so i overengeered a bit
+
+
 // map every segment from 7-segment display to one bit
 // so when it decodes 'f' to 'a', 'a' is a the first bit
 // so a=1, b=2, c=4... now you can just add them together
