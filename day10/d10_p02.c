@@ -108,8 +108,7 @@ char pop() {
 }
 
 void reset_stack() {
-	if (stack != NULL) free(stack);
-	stack = malloc(200 * sizeof(char));
+	if (stack == NULL) stack = malloc(200 * sizeof(char));
 	stack[0] = 'E';
 	sp = stack + 1;
 }
