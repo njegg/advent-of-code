@@ -8,7 +8,7 @@
 
 int x, y;
 int** m;
-int n_step = 1;
+int n_step = 0;
 int ni[8] = {-1, -1, -1,  0,  0,  1,  1,  1 };
 int nj[8] = {-1,  0,  1, -1,  1, -1,  0,  1 };
 
@@ -34,9 +34,10 @@ void increase_neighbours(int i, int j) {
 
 
 int step() {
+	n_step++;
+	int flashes = 0;
 	/* printf("\033[H\033[J"); // clear screen */
 	/* usleep(100000); */
-	int flashes = 0;
 
 	// increase evey octopus
 	for (int i = 0; i < y; i++) {
@@ -63,7 +64,6 @@ int step() {
 		printf("\n");
 	}
 
-	n_step++;
 	return flashes;
 }
 

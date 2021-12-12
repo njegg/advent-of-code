@@ -19,7 +19,7 @@ int sum_and_shift(int* window)
 }
 
 
-void main(void)
+int main(void)
 {
     FILE *fp = fopen("d01_input", "r");
 
@@ -28,16 +28,14 @@ void main(void)
     int window[3];
 
     // fill window
-    for (int i = 0; i < WIN_SIZE; i++)
-    {
-        if (fscanf(fp, "%i", window + i) < 0) return;
+    for (int i = 0; i < WIN_SIZE; i++) {
+        if (fscanf(fp, "%i", window + i) < 0) return -1;
     }
     
     sum_a = sum_and_shift(window);
 
     // tries to add to last slot
-    while (fscanf(fp, "%i", window + WIN_SIZE - 1) > 0)
-    {
+    while (fscanf(fp, "%i", window + WIN_SIZE - 1) > 0) {
         sum_b = sum_and_shift(window);
 
         if (sum_b > sum_a)

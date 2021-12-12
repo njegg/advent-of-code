@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void main(void) {
+int main(void) {
 
 	FILE *fp = fopen("d01_input", "r");
 
@@ -17,7 +17,8 @@ void main(void) {
 		measure = tmp_measure;
 	}
 	
-	printf("Increases = %i\n", incs);
-
     fclose(fp);
+
+	printf("Increases = %i\n", incs);
+	return incs;
 }
