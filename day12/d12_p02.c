@@ -190,7 +190,7 @@ void free_caves() {
 
 void free_map(int size) {
 	for (int i = 0; i < size; i++)
-          free(graph[i]);
-        free(graph);
+		free(graph[i]);
+	free(graph);
 }
 
