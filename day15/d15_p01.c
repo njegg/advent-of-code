@@ -12,9 +12,6 @@
 int ** m;
 int x = 0, y = 0;
 
-int min_risk = MAX_32;
-
-
 int main(int ac, char** args) {
     int input = ac > 1;
 	
@@ -39,6 +36,7 @@ int main(int ac, char** args) {
 		m[i] = (int*) malloc(x * sizeof(int));
 	}
 
+	// dynamic brogramin
 	int** dm = (int**) calloc(y, sizeof(int*));
 	for (int i = 0; i < y; i++) {
 		dm[i] = (int*) calloc(x, sizeof(int));
@@ -63,24 +61,15 @@ int main(int ac, char** args) {
 			}
 
 			if (j + 1 < x) {
-				int up   = here + m[i][j + 1];
-				if (dm[i][j + 1] == 0 || up < dm[i][j + 1])
-					dm[i][j + 1] = up;
+				int right = here + m[i][j + 1];
+				if (dm[i][j + 1] == 0 || right < dm[i][j + 1])
+					dm[i][j + 1] = right;
 			}
 		}
 	}
 
-	printf("%i\n", dm[y-1][x-1]);
+	printf("minimal risk = %i\n", dm[y-1][x-1]);
 
-	/* for (int i = 0; i < y; i++) { */
-	/* 	for (int j = 0; j < x; j++) { */
-	/* 		printf("%i", m[i][j]); */
-	/* 	} */
-	/* 	printf("\n"); */
-	/* } */
-
-	/* printf("%ix%i\n", x, y); */
-	
 	return 0;
 }
 
