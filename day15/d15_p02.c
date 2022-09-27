@@ -10,27 +10,27 @@
 typedef struct Node
 {
 	int dst;
-	int local;
-	int global;
+	int to_here;
 	struct Node *friends[4];
 	struct Node *parent;
 	int x;
 	int y;
+	int in_pq;
 } Node;
 
 
 // Heap Priority Queue
-Node **pq;
 const int PQ_MAX = 2048;
-int pq_size = 0;
+typedef struct pq
+{
+	Node **data;
+	int size;
+} pq;
 
-void pq_insert(Node *);
-Node * pq_pop();
+void pq_insert(pq *, Node *);
+Node * pq_pop(pq *);
+void pq_destroy(pq *);
 
-
-// Matrix with nodes, grid
-Node **m;
-int w = 0, h = 0;
 
 int main(int argc, char** args) {
     int input_file = argc > 1;
@@ -43,6 +43,7 @@ int main(int argc, char** args) {
 	}
 
 	// Read input size
+	int w = 0, h = 0;
 	char c;
 	while (1) {
 		if ((c = fgetc(fp)) == EOF) break;
@@ -52,11 +53,12 @@ int main(int argc, char** args) {
 		
 	rewind(fp);
 
+	// Data from input
 	char **input = (char **) malloc(h * sizeof(char *));
 	for (int i = 0; i < h; i++)
 		input[i] = (char *) malloc(w * sizeof(char));
 
-
+	// Reading
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
 			input[i][j] = fgetc(fp) - '0';
@@ -64,92 +66,81 @@ int main(int argc, char** args) {
 		fgetc(fp);
 	}
 
-	// Node grid
 	int w5 = w * 5;
 	int h5 = h * 5;
 	
-	Node **m = (Node **) malloc (h5 * sizeof(Node *));
+	// Node Graph
+	Node **g = (Node **) malloc (h5 * sizeof(Node *));
 	for (int i = 0; i < h5; i++)
-		m[i] = (Node *) malloc (w5 * sizeof(Node));
+		g[i] = (Node *) malloc (w5 * sizeof(Node));
 
+	// Filling Nodes data
 	for (int i = 0; i < h5; i++) {
 		for (int j = 0; j < w5; j++) {
-			Node *n = &m[i][j];
-			int inc = i / w;
-			inc += j / h;
+			Node *n = &g[i][j];
+
+			int inc = i / w + j / h;
 			n->dst = input[i % h][j % w] + inc;
-			if (n->dst > 9) {
+			if (n->dst > 9)
 				n->dst = n->dst % 10 + 1;
-			}
 
-			n->local = INT_MAX;
-			n->global = INT_MAX;
+			n->to_here = INT_MAX;
 
-			n->friends[0] = i > 0 		 ? &m[i - 1][j] : NULL;
-			n->friends[1] = (j < w5 - 1) ? &m[i][j + 1] : NULL;
-			n->friends[2] = (i < h5 - 1) ? &m[i + 1][j] : NULL;
-			n->friends[3] = j > 0 		 ? &m[i][j - 1] : NULL;
+			n->friends[0] = i > 0 		 ? &g[i - 1][j] : NULL;
+			n->friends[1] = (j < w5 - 1) ? &g[i][j + 1] : NULL;
+			n->friends[2] = (i < h5 - 1) ? &g[i + 1][j] : NULL;
+			n->friends[3] = j > 0 		 ? &g[i][j - 1] : NULL;
 
-			n->parent  = NULL;
+			n->parent = NULL;
 			n->x = j;
 			n->y = i;
 		}
 	}
-	m[0][0].local = 0;
+
+	g[0][0].to_here = 0;
 
 	for (int i = 0; i < h; i++)
 		free(input[i]);
 	free(input);
 
-	pq = (Node **) malloc(PQ_MAX * sizeof(Node *));
+	// Priority queue
+	pq *q = (pq *) malloc(sizeof(q));
+	q->data = (Node **) malloc(PQ_MAX * sizeof(Node *));
 
-	char **set = (char **) calloc(h5, sizeof(char *));
-	for (int i = 0; i < h5; i++)
-		set[i] = (char *) calloc(w5, sizeof(char));
-	
+	pq_insert(q, &g[0][0]);
 
-	// A*
-	pq_insert(&m[0][0]);
-	set[0][0] = 1;
-
-	while (pq_size) {
-		Node *cur = pq_pop();
-		set[cur->y][cur->x] = 0;
-
-		if (cur->global == 0) {
-			printf("END\n");
-			break;
-		}
+	// Dijkstra
+	while (q->size) {
+		Node *cur = pq_pop(q);
+		cur->in_pq = 0;
 
 		for (int i = 0; i < 4; i++) {
 			Node *friend = cur->friends[i];
 			if (!friend) continue;
 
-			int to_friend = cur->local + friend->dst;
-			if (to_friend < friend->local) {
+			int to_friend = cur->to_here + friend->dst;
+			if (to_friend < friend->to_here) {
 				friend->parent = cur;
-				friend->local = to_friend;
-				friend->global = to_friend;
-				if (!set[friend->y][friend->x]) {
-					pq_insert(friend);
-					set[friend->y][friend->x] = 1;
+				friend->to_here = to_friend;
+				if (!friend->in_pq) {
+					pq_insert(q, friend);
+					friend->in_pq = 1;
 				}
 			}
 		}
 	}
 
-	printf("%i\n", m[h5 - 1][w5 - 1].global); 
-	if (pq_size != 0) {
+	printf("%i\n", g[h5 - 1][w5 - 1].to_here); 
+	if (q->size != 0) {
 		printf("WARNING: More nodes in queue\n");
 	}
 
 	// Cleanup
-	free(pq);
+	pq_destroy(q);
 
 	for (int i = 0; i < h5; i++)
-		free(m[i]);
-	free(m);
-
+		free(g[i]);
+	free(g);
 
 	return 0;
 }
@@ -161,39 +152,39 @@ int main(int argc, char** args) {
 #define C2_INDEX (index * 2 + 2)
 #define PA_INDEX ((index - 1) / 2)
 
-void pq_insert(Node *node)
+void pq_insert(pq * q, Node *node)
 {
-	int index = pq_size++;
-	if (pq_size == PQ_MAX) {
+	int index = q->size++;
+	if (q->size == PQ_MAX) {
 		printf("ERROR: PQ Overload\n");
 		return;
 	}
 
-	pq[index] = node;
+	q->data[index] = node;
 	if (index == 0) return;
 
 	Node *tmp;
-	int pindex = (index - 1) / 2;
-	while (index > 0 && pq[pindex]->global > pq[index]->global) {
-		tmp = pq[index];
-		pq[index] = pq[pindex];
-		pq[pindex] = tmp;
+	int pindex = PA_INDEX;
+	while (index > 0 && q->data[pindex]->to_here > q->data[index]->to_here) {
+		tmp = q->data[index];
+		q->data[index] = q->data[pindex];
+		q->data[pindex] = tmp;
 
 		index = pindex;
-		pindex = (index - 1) / 2;
+		pindex = PA_INDEX;
 	}
 }
 
-Node * pq_pop()
+Node * pq_pop(pq * q)
 {
-	if (pq_size == 0) return NULL;
-	int end = --pq_size;
+	if (q->size == 0) return NULL;
+	int end = --q->size;
 
-	Node *del = pq[0];
+	Node *del = q->data[0];
 	if (!end) return del; 	// empty
 
-	pq[0] = pq[end];		// swap first with last
-	pq[end] = del;
+	q->data[0] = q->data[end];		// swap first with last
+	q->data[end] = del;
 
 	int index = 0;
 	int c1 = C1_INDEX;
@@ -202,26 +193,26 @@ Node * pq_pop()
 	int min_index;
 	Node *tmp;
 	
-	if (c1 < pq_size && c2 < pq_size) {
-		min_index = pq[c1]->global < pq[c2]->global ? c1: c2;
-	} else if (c1 < pq_size) {
+	if (c1 < q->size && c2 < q->size) {
+		min_index = q->data[c1]->to_here < q->data[c2]->to_here ? c1: c2;
+	} else if (c1 < q->size) {
 		min_index = c1;			// only first child
 	} else {
 		return del;				// no children
 	}
 
-	while (pq[index]->global > pq[min_index]->global) { // restore heap
-		tmp = pq[index];
-		pq[index] = pq[min_index];
-		pq[min_index] = tmp;
+	while (q->data[index]->to_here > q->data[min_index]->to_here) { // restore heap
+		tmp = q->data[index];
+		q->data[index] = q->data[min_index];
+		q->data[min_index] = tmp;
 
 		index = min_index;
 
 		c1 = C1_INDEX;
 		c2 = C2_INDEX;
-		if (c1 < pq_size && c2 < pq_size) {
-			min_index = pq[c1]->global < pq[c2]->global ? c1: c2;
-		} else if (c1 < pq_size) {
+		if (c1 < q->size && c2 < q->size) {
+			min_index = q->data[c1]->to_here < q->data[c2]->to_here ? c1: c2;
+		} else if (c1 < q->size) {
 			min_index = c1;			// only first child
 		} else {
 			break;					// no children
@@ -229,5 +220,11 @@ Node * pq_pop()
 	}
 
 	return del;
+}
+
+void pq_destroy(pq *q)
+{
+	free(q->data);
+	free(q);
 }
 
