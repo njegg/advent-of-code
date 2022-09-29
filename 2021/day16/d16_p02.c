@@ -11,15 +11,15 @@
 #define BITS_MAX_SHORT 600
 
 int read_bits(int n);
-int read_packet();
-
 char *bits;
-int bi = 0;
-
 int bits_len;
+int bi = 0;     // index
+
+long read_packet(int depth);
+void do_operation(long *total, int ID, long read, short is_first);
 
 // Toggle info output
-short debug = 1;
+short debug = 0;
 void dlog(const char *format, ...)
 {
     if (!debug) return;
@@ -52,14 +52,15 @@ int main(int argc, char **argv)
         bits_len += 4;
     }
 
+    bits_len -=4;
+
     for (int i = 0; i < bits_len; i++) {
         dlog("%i", bits[i]);
     } dlog("\n");
 
-    
-    int res = read_packet();
-    printf("%i\n", res);
-
+    long res = read_packet(0);
+    dlog("\n");
+    printf("%li\n", res);
 
     free(bits);
     return EXIT_SUCCESS;
@@ -75,57 +76,91 @@ int read_bits(int n)
     return val;
 }
 
-int read_packet() {
+short END = 0;
+long read_packet(int depth) {
+    if (bi + 6 >= bits_len) {
+        END = 1;
+        return 0;
+    }
     dlog("\n");
 
-    int version = read_bits(3);
-    dlog("V: %i\n", version);
+    char padding[depth + 1];
+    for (int i = 0; i < depth; i++) {
+        padding[i] = ' ';
+    }
+    padding[depth] = '\0';
 
+    int version = read_bits(3);
     int ID = read_bits(3);
+    dlog("%s", padding);
     dlog("ID: %i\n", ID);
 
-    int packet_value = 0;
+    long packet_value = 0;
 
     if (ID == 4) {
         int has_more;
         do {
             has_more = bits[bi++];
-            dlog("MORE: %i\n", has_more);
 
-            int add = read_bits(4);
-            dlog("%i ", add);
+            long add = read_bits(4);
             packet_value <<= 4;
             packet_value += add;
         } while (has_more);
-
-        /* if (bi % 4 != 0) bi += 4 - bi % 4; */
-        dlog("\nVAL: %i\n", packet_value);
     } else {
         int len_type = bits[bi++];
 
-        if (ID == 1) {
-            if (len_type) { // n packets     (1)
-                dlog("LT: 1\n");
-                int packets = read_bits(11);
-                dlog("L: %i\n", packets);
+        short is_first = 1;
 
-                for (int i = 0; i < packets; i++) {
-                    packet_value *= read_packet();
-                }
-            } else {        // n packet bits (0)
-                dlog("LT: 0\n");
-                int packet_bits = read_bits(15);           
-                dlog("L: %i\n", packet_bits);
+        if (len_type) {                            
+            // n packets (1)
+            int packets = read_bits(11);
+            dlog("%s", padding);
+            dlog("PN: %i\n", packets);
 
-                int start = bi;
-                while (bi - start <= packet_bits && bi < bits_len) {
-                    packet_value *= read_packet();
-                    dlog("read %i bits so far\n", bi - start);
-                }
+            for (int i = 0; i < packets; i++) {
+                do_operation(&packet_value, ID, read_packet(depth+1), is_first);
+                is_first = 0;
+            }
+        } else {
+            // n packet bits (0)
+            int packet_bits = read_bits(15);
+            dlog("%s", padding);
+            dlog("BN: %i\n", packet_bits);
+
+            int start = bi;
+
+            while (bi - start < packet_bits && !END) {
+                long val = read_packet(depth+1);
+                if (!END)
+                    do_operation(&packet_value, ID, val, is_first);
+
+                is_first = 0;
             }
         }
+
+        dlog("\n");
     }
 
+    dlog("%s", padding);
+    dlog("VAL: %li\n", packet_value);
     return packet_value;
+}
+
+void do_operation(long *total, int ID, long read, short is_first)
+{
+    if (END) return;
+
+    if (is_first) {
+        *total = read;
+    } else {
+        if      (ID == 0)                  *total += read;
+        else if (ID == 1)                  *total *= read;
+        else if (ID == 2 && read < *total) *total = read; 
+        else if (ID == 3 && read > *total) *total = read; 
+        else if (ID == 5)                  *total = read <  *total ? 1 : 0;
+        else if (ID == 6)                  *total = read >  *total ? 1 : 0;
+        else if (ID == 7)                  *total = read == *total ? 1 : 0;
+    }
+
 }
 

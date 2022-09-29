@@ -121,7 +121,7 @@ void read_packet() {
             dlog("L: %i\n", packet_bits);
 
             int start = bi;
-            while (bi - start <= packet_bits && bi < bits_len) {
+            while (bi - start <= packet_bits && bi + 6 < bits_len) {
                 read_packet();
                 dlog("read %i bits so far\n", bi - start);
             }
