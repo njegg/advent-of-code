@@ -148,7 +148,8 @@ void find_explode_helper(number *n, number **found, int deep)
     find_explode_helper(n->r, found, deep + 1);
 }
 
-number * find_explode(number *n) {
+number * find_explode(number *n)
+{
     number *found = NULL;
     find_explode_helper(n, &found, 0);
     return found;
