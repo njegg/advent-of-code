@@ -7,7 +7,7 @@
 #define INPUT  "d18_input"
 #define SAMPLE "d18_sample"
 
-/* --- Day 17: Trick Shot --- */
+/* --- Day 18: Snailfish --- */
 
 #define L 1
 #define R 0
@@ -136,11 +136,11 @@ void find_explode_helper(number *n, number **found, int deep)
 
     find_explode_helper(n->l, found, deep + 1);
 
-    dlog("[%c] %i at %i, found: %i, has parent: %i\n", n->is_leaf ? 'L' : 'N',  n->val, deep, *found != NULL, n->p != NULL);
+    /* dlog("[%c] %i at %i, found: %i, has parent: %i\n", n->is_leaf ? 'L' : 'N',  n->val, deep, *found != NULL, n->p != NULL); */
 
     if (n->is_leaf && !(*found) && deep > 4) {
         *found = n->p;
-        dlog("EPIK\n");
+        /* dlog("EPIK\n"); */
         print_number(*found);
         return;
     } 
@@ -158,7 +158,12 @@ void find_left(number *n, number **left)
 {
     number *cur = n->p;
     if (cur->r == n) {
-        *left = cur->l;
+        cur = cur->l;
+        while (!cur->is_leaf) {
+            cur = cur->r;
+        }
+
+        *left = cur;
         return;
     }
 
@@ -186,7 +191,12 @@ void find_right(number *n, number **right)
 {
     number *cur = n->p;
     if (cur->l == n) {
-        *right = cur->r;
+        cur = cur->r;
+        while (!cur->is_leaf) {
+            cur = cur->l;
+        }
+
+        *right = cur;
         return;
     }
 
@@ -219,6 +229,7 @@ void explode(number *n)
     find_left(n, &left);
 
     if (left) {
+        print_number(left);
         left->val += l_val;
     }
 
@@ -226,6 +237,7 @@ void explode(number *n)
     find_right(n, &right);
 
     if (right) {
+        print_number(right);
         right->val += r_val;
     }
 
@@ -246,6 +258,7 @@ void find_and_split(number *n, int *found)
     find_and_split(n->l, found);
 
     if (n->val > 9 && !*found) {
+        *found = n->val;
         int l_val = n->val / 2;
         int r_val = n->val / 2 + n->val % 2;
 
@@ -258,7 +271,6 @@ void find_and_split(number *n, int *found)
         n->is_leaf = 0;
         n->val = 0;
 
-        *found = 1;
         return;
     }
 
@@ -275,12 +287,46 @@ number * add(number *x, number *y)
     res->l = x;
     res->r = y;
 
+    dlog("ADD ");
+    print_number(y);
+    print_number(res); dlog("\n");
+
+    int found_split = 0;
+    number *ex;
+
+    while (1) {
+        ex = find_explode(res);
+        /* print_number(ex); */
+        if (ex) {
+            explode(ex);
+            dlog("  ^-- EXPLODE\n");
+            print_number(res); dlog("\n");
+            continue;
+        }
+
+        found_split = 0;
+        find_and_split(res, &found_split);
+        if (found_split) {
+            dlog("SPLIT %i\n", found_split);
+            print_number(res); dlog("\n");
+        } else {
+            break;
+        }
+    }
+
     return res;
+}
+
+int magnitude(number *n)
+{
+    if (!n) return 0;
+    if (n->is_leaf) return n->val;
+    return 3 * magnitude(n->l) + 2 * magnitude(n->r);
 }
 
 int main(int argc, char **argv)
 {
-    set_debug_info(1);
+    set_debug_info(0);
 
 	FILE *fp = fopen(argc > 1 ? INPUT : SAMPLE, "r");
 
@@ -291,54 +337,23 @@ int main(int argc, char **argv)
 
     int number_count;
     number **numbers = number_from_file(fp, &number_count);
-
-    number *root = add(numbers[0], numbers[1]);
-    /* number *root = numbers[0]; */
-
     dlog("\n");
-    print_number(root);
 
-    int found_split = 0;
-    number *ex;
+    number *res = numbers[0];
 
-    while (1) {
-        ex = find_explode(root);
-        print_number(ex);
-        if (ex) {
-            explode(ex);
-            dlog("EXPLODED\n");
-            print_number(root);
-            continue;
-        }
-
-        found_split = 0;
-        find_and_split(root, &found_split);
-        if (found_split) {
-            dlog("SPLITED\n");
-            print_number(root);
-        } else {
-            break;
-        }
+    for (int i = 1; i < number_count; i++) {
+        res = add(res, numbers[i]);
     }
 
-    ex = find_explode(root);
-    ex = root;
-    print_number(ex);
+    print_number(res);
+    dlog("\n");
 
-    free_number(root);
+    printf("%i\n", magnitude(res));
 
-    /* for (int i = 0; i < number_count; i++) */
-    /*     free(numbers[i]); */
-    /* free(numbers); */
-
+    free_number(res); // all numbers are in res
+    
+    free(numbers);    // free the array of pointers
 
     return EXIT_SUCCESS;
 }
 
-/*
-[[[[0,7],4],[[7,8],[6,0]]],[8,1]]
-[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]
-[[[[0,7],4],[[7,8],[0,[6,7]]]],[1,1]]
-
-
-*/
