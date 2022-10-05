@@ -58,7 +58,7 @@ void print_number(number *n)
     dlog("\n");
 }
 
-number ** number_from_file(FILE *fp, int *count)
+number ** numbers_from_file(FILE *fp, int *count)
 {
     char c;
     int number_count = 0;
@@ -136,12 +136,9 @@ void find_explode_helper(number *n, number **found, int deep)
 
     find_explode_helper(n->l, found, deep + 1);
 
-    /* dlog("[%c] %i at %i, found: %i, has parent: %i\n", n->is_leaf ? 'L' : 'N',  n->val, deep, *found != NULL, n->p != NULL); */
-
     if (n->is_leaf && !(*found) && deep > 4)
     {
         *found = n->p;
-        /* dlog("EPIK\n"); */
         print_number(*found);
         return;
     } 
@@ -328,35 +325,31 @@ int magnitude(number *n)
 void number_copy_helper(number *n, number *copy, number *parent)
 {
     if (!n) return;
-    if (!copy) {
-        dlog("WTF\n");
-        return;
-    }
-
-    dlog("OK\n");
 
     *copy = *n;
     copy->p = parent;
-    copy->p = parent;
 
     if (!n->is_leaf) {
-        n->l = (number *) malloc(sizeof(number));
-        n->r = (number *) malloc(sizeof(number));
+        copy->l = (number *) malloc(sizeof(number));
+        copy->r = (number *) malloc(sizeof(number));
 
         number_copy_helper(n->l, copy->l, copy);
         number_copy_helper(n->r, copy->r, copy);
     }
 }
 
-void number_copy(number *n, number *copy)
+number * number_copy(number *n)
 {
-    copy = (number *) malloc(sizeof(number));
+    number *copy = (number *) malloc(sizeof(number));
+    number **res = &copy;
     number_copy_helper(n, copy, NULL);
+
+    return *res;
 }
 
 int main(int argc, char **argv)
 {
-    set_debug_info(1);
+    set_debug_info(0);
 
 	FILE *fp = fopen(argc > 1 ? INPUT : SAMPLE, "r");
 
@@ -366,10 +359,8 @@ int main(int argc, char **argv)
 	}
 
     int number_count;
-    number **numbers = number_from_file(fp, &number_count);
-    /* dlog("\n"); */
+    number **numbers = numbers_from_file(fp, &number_count);
 
-    number *res;
     int max = -1;
 
     number *cur;
@@ -377,35 +368,24 @@ int main(int argc, char **argv)
         for (int j = 0; j < number_count; j++) {
             if (i == j) continue;
 
-            cur = add(numbers[i], numbers[j]);
+            number *x = number_copy(numbers[i]);
+            number *y = number_copy(numbers[j]);
+
+            number *res = add(x, y);
+
             int mag = magnitude(res);
             if (mag > max) {
                 max = mag;
-                res = cur;
             }
+
+            free_number(res);
         }
     }
 
-    /* print_number(res); */
-    /* dlog("\n"); */
+    printf("%i\n", max);
 
-    /* printf("%i\n", magnitude(res)); */
-
-    
-    number *n = numbers[0];
-    number *copy;
-    number_copy(n, copy);
-    print_number(copy);
-
-
-
-
-    free_number(n); // all numbers are in res
-
-    dlog("Freeing the copy\n");
-    free_number(copy);
-    dlog("OK\n");
-    
+    for (int i = 0; i < number_count; i++)
+        free_number(numbers[i]);
     free(numbers);    // free the array of pointers
 
     return EXIT_SUCCESS;
