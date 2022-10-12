@@ -1,4 +1,4 @@
-#include <bits/pthreadtypes.h>
+#include <math.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,11 +9,18 @@
 
 /* --- Day 19: Beacon Scanner --- */
 
+const int max_beacons = 40; // if it reads more than this, error
+
 typedef struct point
 {
-    int end;
     int x, y, z;
+    int end;
 } point;
+
+float dst(point *p, point *q);
+void print_point(point *p);
+int feq(float x, float y);
+int check_scanner_pair(point *, point *);
 
 int main(int argc, char **argv)
 {
@@ -28,6 +35,7 @@ int main(int argc, char **argv)
 
     int scanner_count = 0;
 
+    // Count scanners
     int line_max = 32;
     char line[line_max];
     while (fgets(line, line_max, fp))
@@ -39,8 +47,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
     
-    const int max_beacons = 40; // if it reads more than this, error
-    
+
     point **scanners = (point **) malloc(sizeof(point *) * scanner_count);
     for (int i = 0; i < scanner_count; i++)
         scanners[i] = (point *) calloc(max_beacons, sizeof(point));
@@ -48,6 +55,7 @@ int main(int argc, char **argv)
     int scaner_index = 0;
     int beacon_index = 0;
 
+    // Read input
     fgets(line, line_max, fp);
     while (fgets(line, line_max, fp)) {
         if (line[0] == '\n') continue;
@@ -76,6 +84,7 @@ int main(int argc, char **argv)
     }
     scanners[scaner_index][beacon_index].end = 1;
 
+    // Print scanners
     for (int i = 0; i < scanner_count; i++) {
         dlog("\nscanner %i\n", i);
         for (int j = 0; j < max_beacons; j++) {
@@ -87,60 +96,95 @@ int main(int argc, char **argv)
         }
         dlog("\n");
     }
-
-    // Main alg
-    // For every beacon in scanner A, fix the beacon to 0,0,0 and calcucate
-    // a copy of beacons with coordinates relative to that point
-    // With that data go through beacons of scanner B and fix every point of B
-    // to 0,0,0 and check others if they exist in A (check rotations)
-    
     dlog("----------------\n\n");
 
-    point *sample = (point *) malloc(sizeof(point) * max_beacons);
-
-    for (int i = 0; i < scanner_count; i++) {
-        for (int j = 0; j < max_beacons; j++) {
-            point *cur = &scanners[i][j];
-            if (cur->end) break;
-            
-            sample[j].x = 0;
-            sample[j].y = 0;
-            sample[j].z = 0;
-            
-            // Fill sample with points relative to cur
-            for (int k = 0; !scanners[i][k].end; k++) {
-                if (k != j) {
-                    sample[k].x = scanners[i][k].x - cur->x;
-                    sample[k].y = scanners[i][k].y - cur->y;
-                    sample[k].z = scanners[i][k].z - cur->z;
-                }
-
-                dlog("%i,%i,%i\n", sample[k].x, sample[k].y, sample[k].z);
+    // Pairing alg
+    // scanner A, calc all distances relative to A[0]
+    // do the same for each in B and check if distances are the same
+    // if 12 not found, calculate again based on A[1]
+    
+    for (int i = 0; i < scanner_count - 1; i++) {
+        for (int j = i + 1; j < scanner_count; j++) {
+            int pair = check_scanner_pair(scanners[i], scanners[j]);
+            if (pair) {
+                dlog("Scanner %i and Scanner %i match!\n", i, j);
             }
-            dlog("\n");
         }
-        dlog("\n");
     }
+
 
     for (int i = 0; i < scanner_count; i++)
         free(scanners[i]);
     free(scanners);
-    
 
     return EXIT_SUCCESS;
 }
 
-/*
- *
- *
-        --- scanner 0 ---
-        0,2  0,0            0, -2
-        4,1  4,-1
-        3,3  0,1
+int check_scanner_pair(point *A, point *B)
+{
+    if (!A || !B) {
+        dlog("ERROR: One scanner is NULL\n");
+        return 0;
+    }
 
-        --- scanner 1 ---
-        -1,-1 0,0           1,1
-        -5,0  -4,0
-        -2,1  -1,2
- *
- */
+    float *dists = (float *) malloc(sizeof(float) * max_beacons);
+
+    for (int i = 0; !A[i].end; i++)
+    {
+        point *a_beacon = &A[i];
+
+        int a;
+        for (a = 0; !A[a].end; a++)
+            dists[a] = dst(a_beacon, &A[a]); // Relative distances to A[i]
+        dists[a] = -1.0;
+
+        // Find 12 beacons that have distacnes that are in A
+        // Starting with distances relative to B[0] and so on
+        for (int j = 0; !B[j].end; j++)
+        {
+            int matches = 0;
+
+            point *b_beacon = &B[j]; // B[i]
+
+            // For each in B calc distances relative to B[i]
+            for (int k = 0; !B[k].end; k++) {
+                float distb = dst(b_beacon, &B[k]);
+
+                // Check if the same distance is in A
+                for (int d = 0; dists[d] >= 0; d++) {
+                    if (feq(dists[d], distb) && distb != 0) {
+                        matches++;
+                        break;
+                    }
+                }
+            }
+            
+            if (matches >= 11) {
+                // Calculate the position of B based on A
+                return 1;
+            }
+        }
+    }
+    
+    return 0;
+}
+
+float dst(point *p, point *q)
+{
+    return sqrtf(
+        (p->x - q->x) * (p->x - q->x) +
+        (p->y - q->y) * (p->y - q->y) +
+        (p->z - q->z) * (p->z - q->z)
+    );
+}
+
+void print_point(point *p)
+{
+    dlog("%i,%i,%i\n", p->x, p->y, p->z);
+}
+
+
+int feq(float x, float y)
+{
+    return fabs(x - y) < 0.9; // max distance is 1 because integer points
+}
