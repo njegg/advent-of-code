@@ -3,9 +3,9 @@ import Data.Char (ord)
 
 data Move = Rock | Paper | Scissors deriving (Eq,Enum)
 
-stronger :: Move -> Move
-stronger Scissors = Rock
-stronger m = succ m
+succ' :: Move -> Move
+succ' Scissors = Rock
+succ' m = succ m
 
 move :: Char -> Move
 move c
@@ -16,9 +16,9 @@ play :: String -> Int
 play (a:_:b:_) = 1 + fromEnum (move b) + result
     where
         result
-            | stronger (move a) == move b = 6
-            | stronger (move b) == move a = 0
-            | otherwise                   = 3
+            | succ' (move a) == move b = 6
+            | succ' (move b) == move a = 0
+            | otherwise                = 3
 
 main :: IO ()
 main = do
