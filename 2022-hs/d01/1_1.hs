@@ -2,7 +2,7 @@ module Main where
 
 main :: IO ()
 main = do
-    input <- readFile "./1input.txt"
+    input <- readFile "./1_i.txt"
     print $ foldl max 0 $ splitSum $ lines input
 
 splitSum :: [String] -> [Integer] 

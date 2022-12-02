@@ -31,6 +31,6 @@ play (c:_:i:_) = 1 + fromEnum my + result
 
 main :: IO ()
 main = do
-    input <- readFile "./2input.txt"
+    input <- readFile "./2_i.txt"
     print $ sum $ map play $ lines input
 

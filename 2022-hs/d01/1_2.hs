@@ -5,7 +5,7 @@ import Data.List (sortBy)
 
 main :: IO ()
 main = do
-    input <- readFile "./1input.txt"
+    input <- readFile "./1_i.txt"
     print $ sum $ take 3 $ sortBy (flip compare)  $ splitSum $ lines input
 
 splitSum :: [String] -> [Integer] 
