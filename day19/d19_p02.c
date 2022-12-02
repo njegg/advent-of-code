@@ -2,7 +2,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../../util/util.h"
+#include "../util/util.h"
 
 #define INPUT  "d19_input"
 #define SAMPLE "d19_sample"
