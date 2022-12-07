@@ -7,13 +7,9 @@ class File (var name: String,
             var size: Int,
             var parent: File,
             var dir: Boolean,
-            var children: mutable.HashMap[String, File]) {
+            ) {
 
-  def this(name: String, parent: File) =
-    this(name, 0, parent, true, new mutable.HashMap[String, File]())
-
-  def this(name: String, size: Int, parent: File) =
-    this(name, size, parent, false, new mutable.HashMap[String, File]())
+  var children: mutable.HashMap[String, File] = new mutable.HashMap[String, File]()
 
   def print(depth: Int): Unit = {
     println(s"${"  " * depth} - ${toString()}")
@@ -54,7 +50,7 @@ object LoadFile {
     val lines = source.getLines().toList
     source.close
 
-    val root = new File("/", null)
+    val root = new File("/", 0, null, true)
     var cur = root
     var name: String = null
 
@@ -66,9 +62,9 @@ object LoadFile {
         cur = if (line(5) == '.') cur.parent else cur.children(split(2))
       } else {
         if (line(0) == 'd') {
-          cur.children.put(name, new File(name, cur))
+          cur.children.put(name, new File(name, 0, cur, true))
         } else if (line(0).isDigit) {
-          cur.children.put(name, new File(split(1), split(0).toInt, cur))
+          cur.children.put(name, new File(split(1), split(0).toInt, cur, false))
         }
       }
     }
