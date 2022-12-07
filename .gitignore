@@ -1,5 +1,9 @@
 *.o
 *.out
+out
+.idea
 test.c
 test
 .vscode
+*.metals
+*.iml
