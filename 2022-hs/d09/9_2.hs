@@ -3,7 +3,7 @@ module Main where
 import Data.Bifunctor (Bifunctor(bimap))
 import Data.List (nub)
 
---- Day 9: Rope Bridge, Part 1 ---
+--- Day 9: Rope Bridge, Part 2 ---
 
 
 type Knot = (Int, Int)
