@@ -4,7 +4,7 @@ import scala.io.Source
 
 object D13_1 {
   def main(args: Array[String]): Unit = {
-    val source = Source.fromFile("2022-hs/d13/13_i.txt")
+    val source = Source.fromFile("2022-f/d13/13_i.txt")
     val lineIt = source.getLines.toList.filter(!_.isBlank).iterator
     source.close
 
