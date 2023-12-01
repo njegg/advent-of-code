@@ -23,67 +23,68 @@ internal static class Program
                 }
 
                 if (o.Day == 0) RunAllDays(o);
-                else            RunDay(o);
+                else SolvePuzzle(o);
             });
     }
 
-    private static void RunDay(Options o)
+    private static void SolvePuzzle(Options o)
     {
-        var solution = GetSolutionInstance(o.Day);
         var inputPath = $"Input/d{o.Day}_" + (o.Example ? "example.txt" : "input.txt");
         
-        if (o.Part is 0 or 1) PrintSolution(solution.Part1, o.Time, inputPath, o.Day);
-        if (o.Part is 0 or 2) PrintSolution(solution.Part2, o.Time, inputPath, o.Day);
+        var part1 = GetSolutionInstance(o.Day, 1);
+        var part2 = GetSolutionInstance(o.Day, 2);
+
+        if (o.Part is 0 or 1) PrintSolution(part1, o, inputPath);
+        if (o.Part is 0 or 2) PrintSolution(part2, o, inputPath);
     }
 
     private static void RunAllDays(Options o)
     {
-        var solutions = Enumerable
-            .Range(1, 25)
-            .Select(GetSolutionInstance);
-
-        foreach (var (solution, day) in solutions.Select((s, i) => (s, i + 1)))
+        foreach (var day in Enumerable.Range(1, 25))
         {
-            var inputPath = $"Input/d{day}_" + (o.Example ? "example.txt" : "input.txt");
-            
-            Console.WriteLine($"---- Day {day:00} ----------------------------");
-            PrintSolution(solution.Part1, o.Time, inputPath, day);
-            PrintSolution(solution.Part2, o.Time, inputPath, day);
+            SolvePuzzle(new Options { Day = day, Part = 0, Example = o.Example, Time = o.Time});
         }
-        
-        Console.WriteLine($"----------------------------------------");
     }
 
-    private static SolutionBase GetSolutionInstance(int day)
+    private static SolutionBase GetSolutionInstance(int day, int part)
     {
-        var solutionName = $"{nameof(AoC_2023)}.{nameof(Solutions)}.Day{day:00}";
+        var solutionName = $"{nameof(AoC_2023)}.{nameof(Solutions)}.D{day:00}P{part:00}";
         var type = Type.GetType(solutionName) ?? typeof(SolutionBase);
         var solution = Activator.CreateInstance(type);
 
         if (solution is null) throw new IOException($"Could not load {solutionName}");
 
-        return (SolutionBase) solution;
+        return (SolutionBase)solution;
     }
 
     private static void PrintSolution(
-        Func<string, string> solutionFunction,
-        bool time,
-        string inputPath,
-        int day
-    ) {
-        if (!time)
+        SolutionBase solution,
+        Options o,
+        string inputPath
+    )
+    {
+        if (!o.Time)
         {
-            Console.WriteLine(solutionFunction(inputPath));
+            Console.WriteLine(solution.Solve(inputPath));
             return;
         }
-        
-        var watch = System.Diagnostics.Stopwatch.StartNew(); 
-        var result = solutionFunction(inputPath);
+
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        var result = solution.Solve(inputPath);
         watch.Stop();
 
         var paddedTimeMs = $"{watch.ElapsedMilliseconds}ms".PadLeft(40 - result.Length, ' ');
         
+        if (o.Example)
+        {
+            var correct = solution.Test(result);
+
+            Console.ForegroundColor = correct ? ConsoleColor.Green : ConsoleColor.Red;
+        }
+
         Console.WriteLine($"{result}{paddedTimeMs}");
+
+        Console.ForegroundColor = ConsoleColor.White;
     }
 }
 
@@ -105,7 +106,7 @@ class Options
         HelpText = "Which part"
     )]
     public int Part { get; set; }
-    
+
     [Option(
         shortName: 't',
         longName: "time",
@@ -113,7 +114,7 @@ class Options
         HelpText = "Time it"
     )]
     public bool Time { get; set; }
-    
+
     [Option(
         shortName: 'e',
         longName: "example-input",
@@ -121,4 +122,12 @@ class Options
         HelpText = "Use example input"
     )]
     public bool Example { get; set; }
+
+    [Option(
+        shortName: 'a',
+        longName: "all",
+        Required = false,
+        HelpText = "Run em all"
+    )]
+    public bool All { get; set; }
 }
