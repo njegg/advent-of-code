@@ -6,7 +6,8 @@ namespace AoC_2023.Solutions;
 
 public class D01P02 : SolutionBase
 {
-    protected override string ExampleSolution => "281";
+    public override string ExampleAnswer => "281";
+    public override string Answer => "54504";
 
     private readonly List<State> states =
         new[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" }

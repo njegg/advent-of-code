@@ -7,7 +7,9 @@ namespace AoC_2023.Solutions;
 
 public class D02P01 : SolutionBase
 {
-    protected override string ExampleSolution => "";
+    public override string ExampleAnswer => "8";
+    public override string Answer => "2369";
+    
     private const int INVALID_FLAG = -1;
 
 

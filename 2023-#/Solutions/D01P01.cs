@@ -6,7 +6,8 @@ namespace AoC_2023.Solutions;
 
 public class D01P01 : SolutionBase
 {
-    protected override string ExampleSolution => "142";
+    public override string ExampleAnswer => "142";
+    public override string Answer => "54597";
 
     public override string Solve(string inputPath)
     {

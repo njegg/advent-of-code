@@ -23,37 +23,42 @@ internal static class Program
                     Environment.Exit(1);
                 }
 
-                if (o.Day == 0) RunAllDays(o);
+                if (o.Day == 0) SolveAllDays(o);
+                else if (o.Part == 0) SolveOneDay(o);
                 else SolvePuzzle(o);
             });
     }
 
     private static void SolvePuzzle(Options o)
     {
-        var inputPath = $"Input/d{o.Day}_" + (o.Example ? "example.txt" : "input.txt");
+        var inputPath = $"Input/d{o.Day}_" + (o.Example ? "example" : "input");
         
-        var part1 = GetSolutionInstance(o.Day, 1);
-        var part2 = GetSolutionInstance(o.Day, 2);
+        if (o.Example && o is { Day: 1, Part: 2 })
+            inputPath += "_2";
 
-        if (o.Part is 0 or 1) PrintSolution(part1, o, inputPath);
-        if (o.Part is 0 or 2) PrintSolution(part2, o, inputPath);
+        if (GetSolutionInstance(o.Day, o.Part) is { } s) PrintSolution(s, o, inputPath);
     }
 
-    private static void RunAllDays(Options o)
+    private static void SolveAllDays(Options o) =>
+        Enumerable
+            .Range(1, 25)
+            .ToList()
+            .ForEach(day => SolveOneDay(o.WithDay(day)));
+
+    private static void SolveOneDay(Options o)
     {
-        foreach (var day in Enumerable.Range(1, 25))
-        {
-            SolvePuzzle(new Options { Day = day, Part = 0, Example = o.Example, Time = o.Time});
-        }
+        SolvePuzzle(o.WithPart(1));
+        SolvePuzzle(o.WithPart(2));
     }
 
-    private static SolutionBase GetSolutionInstance(int day, int part)
+    private static SolutionBase? GetSolutionInstance(int day, int part)
     {
         var solutionName = $"{nameof(AoC_2023)}.{nameof(Solutions)}.D{day:00}P{part:00}";
-        var type = Type.GetType(solutionName) ?? typeof(SolutionBase);
-        var solution = Activator.CreateInstance(type);
-
-        if (solution is null) throw new IOException($"Could not load {solutionName}");
+        
+        var type = Type.GetType(solutionName);
+        if (type is null) return null;
+        
+        var solution = Activator.CreateInstance(type) ?? throw new IOException($"Could not load {solutionName}"); ;
 
         return (SolutionBase)solution;
     }
@@ -62,24 +67,33 @@ internal static class Program
         SolutionBase solution,
         Options o,
         string inputPath
-    )
-    {
-        if (!o.Time)
-        {
-            Console.WriteLine(solution.Solve(inputPath));
-            return;
-        }
+    ) {
+        Stopwatch? time = null;
 
-        var watch = Stopwatch.StartNew();
+        if (o.Time) time = Stopwatch.StartNew();
         var result = solution.Solve(inputPath);
-        watch.Stop();
-
-        var paddedTimeMs = $"{watch.ElapsedMilliseconds}ms".PadLeft(24 - result.Length, ' ');
+        if (o.Time) time?.Stop();
         
-        Console.Write($"{result}{paddedTimeMs}\n");
+        var paddedTimeMs = time is null ? 
+            "" : $"{time.ElapsedMilliseconds / 1000.0f:F3}s".PadLeft(24 - result.Length, ' ');
+
+        var answer = o.Example ? solution.ExampleAnswer : solution.Answer;
+        if (answer is not null)
+        {
+            Console.ForegroundColor = answer == result ? ConsoleColor.Green : ConsoleColor.Red;
+        }
+        
+        Console.Write(result);
+        
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.Out.Flush(); 
+        Console.WriteLine(paddedTimeMs);
+        
+        Console.ResetColor();
     }
 }
 
+// ReSharper disable once ClassNeverInstantiated.Global ArrangeTypeModifiers
 class Options
 {
     [Option(
@@ -122,4 +136,16 @@ class Options
         HelpText = "Run em all"
     )]
     public bool All { get; set; }
+
+    public Options WithDay(int day)
+    {
+        Day = day;
+        return this;
+    }
+    
+    public Options WithPart(int part)
+    {
+        Part = part;
+        return this;
+    }
 }
