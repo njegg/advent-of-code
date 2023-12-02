@@ -12,17 +12,12 @@ public class D01P01 : SolutionBase
     {
         return File.ReadLines(inputPath)
             .ToList()
-            .Select(FindDigits)
+            .Select(l =>
+                (l.SkipWhile(IsNotDigit).First() - '0') * 10
+                + (l.Reverse().SkipWhile(IsNotDigit).First() - '0')
+            )
             .Sum()
             .ToString();
-    }
-
-    private static int FindDigits(string l)
-    {
-        var firstDigit = l.SkipWhile(IsNotDigit).First() - '0';
-        var lastDigit = l.Reverse().SkipWhile(IsNotDigit).First() - '0';
-
-        return firstDigit * 10 + lastDigit;
     }
 
     private static bool IsNotDigit(char c) => c is < '0' or > '9';

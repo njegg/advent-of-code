@@ -1,4 +1,5 @@
-﻿using AoC_2023.Solutions;
+﻿using System.Diagnostics;
+using AoC_2023.Solutions;
 using CommandLine;
 
 namespace AoC_2023;
@@ -69,22 +70,13 @@ internal static class Program
             return;
         }
 
-        var watch = System.Diagnostics.Stopwatch.StartNew();
+        var watch = Stopwatch.StartNew();
         var result = solution.Solve(inputPath);
         watch.Stop();
 
-        var paddedTimeMs = $"{watch.ElapsedMilliseconds}ms".PadLeft(40 - result.Length, ' ');
+        var paddedTimeMs = $"{watch.ElapsedMilliseconds}ms".PadLeft(24 - result.Length, ' ');
         
-        if (o.Example)
-        {
-            var correct = solution.Test(result);
-
-            Console.ForegroundColor = correct ? ConsoleColor.Green : ConsoleColor.Red;
-        }
-
-        Console.WriteLine($"{result}{paddedTimeMs}");
-
-        Console.ForegroundColor = ConsoleColor.White;
+        Console.Write($"{result}{paddedTimeMs}\n");
     }
 }
 
