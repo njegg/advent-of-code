@@ -1,5 +1,3 @@
-using System.Data;
-
 namespace AoC_2023.Solutions;
 
 // --- --- Day 4: Scratchcards - Part 1 --- //
