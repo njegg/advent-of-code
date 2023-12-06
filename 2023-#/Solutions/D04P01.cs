@@ -2,13 +2,13 @@ namespace AoC_2023.Solutions;
 
 // --- --- Day 4: Scratchcards - Part 1 --- //
 
-public class D04P01 : SolutionBase
+public class D04P01 : Solution
 {
     public override string ExampleAnswer => "142";
 
-    public override string Solve(string inputPath)
+    public override string Solve(IEnumerable<string> lines)
     {
-        return File.ReadLines(inputPath)
+        return lines
             .Select(l => l.Split(':')[1])
             .Select(l => l
                 .Split(" | ")

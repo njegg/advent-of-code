@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Runtime.Versioning;
-
 namespace AoC_2023.Solutions;
 
 // --- Day 5: If You Give A Seed A Fertilizer - Part 2 ---
 
-public class D05P02 : SolutionBase
+public class D05P02 : Solution
 {
     public override string ExampleAnswer => "46";
     public override string Answer => "219529182";
@@ -26,10 +23,8 @@ public class D05P02 : SolutionBase
     
     private record struct Transform(long Start, long End, long Offset);
 
-    public override string Solve(string inputPath)
+    public override string Solve(IEnumerable<string> lines)
     {
-        var lines = File.ReadLines(inputPath).ToList();
-
         var seeds = lines
             .First()
             .Split(": ")[1]
@@ -44,7 +39,6 @@ public class D05P02 : SolutionBase
 
         lines
             .Skip(1)
-            // .Take(12)
             .Where(l => l.Length == 0 || char.IsDigit(l[0]))
             .Select(l => l.Length == 0 ? null : l.Split().Select(long.Parse).ToArray())
             .Select(r => r is null ? null : (Transform?)new Transform(r[1], r[1] + r[2] - 1, r[0] - r[1]))

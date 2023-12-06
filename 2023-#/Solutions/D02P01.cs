@@ -2,10 +2,11 @@
 
 namespace AoC_2023.Solutions;
 
-// --- Day 2: Cube Conundrum --- Part 1 --- //
+
+// --- Day 2: Cube Conundrum - Part 1 --- //
 
 
-public class D02P01 : SolutionBase
+public class D02P01 : Solution
 {
     public override string ExampleAnswer => "8";
     public override string Answer => "2369";
@@ -13,9 +14,9 @@ public class D02P01 : SolutionBase
     private const int INVALID_FLAG = -1;
 
 
-    public override string Solve(string inputPath)
+    public override string Solve(IEnumerable<string> lines)
     {
-        return File.ReadLines(inputPath)
+        return lines
             .ToList()
             .Select(GetValidIds)
             .Sum()

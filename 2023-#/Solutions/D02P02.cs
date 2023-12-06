@@ -2,17 +2,18 @@
 
 namespace AoC_2023.Solutions;
 
-// --- Day 2: Cube Conundrum --- Part 2 --- //
+
+// --- Day 2: Cube Conundrum - Part 2 --- //
 
 
-public class D02P02 : SolutionBase
+public class D02P02 : Solution
 {
     public override string ExampleAnswer => "2286";
     public override string Answer => "66363";
 
-    public override string Solve(string inputPath)
+    public override string Solve(IEnumerable<string> lines)
     {
-        return File.ReadLines(inputPath)
+        return lines
             .ToList()
             .Select(GetPower)
             .Sum()

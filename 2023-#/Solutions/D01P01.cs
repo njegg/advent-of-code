@@ -4,14 +4,14 @@ namespace AoC_2023.Solutions;
 
 // --- Day 1: Trebuchet?! Part 1 --- //
 
-public class D01P01 : SolutionBase
+public class D01P01 : Solution
 {
     public override string ExampleAnswer => "142";
     public override string Answer => "54597";
 
-    public override string Solve(string inputPath)
+    public override string Solve(IEnumerable<string> lines)
     {
-        return File.ReadLines(inputPath)
+        return lines
             .ToList()
             .Select(l =>
                 (l.SkipWhile(IsNotDigit).First() - '0') * 10

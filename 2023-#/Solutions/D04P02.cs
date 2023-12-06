@@ -2,16 +2,16 @@ namespace AoC_2023.Solutions;
 
 // --- --- Day 4: Scratchcards - Part 2 --- //
 
-public class D04P02 : SolutionBase
+public class D04P02 : Solution
 {
     public override string ExampleAnswer => "30";
     public override string Answer => "7258152";
 
     private Dictionary<int, (int hits, int cards)> map = new();
 
-    public override string Solve(string inputPath)
+    public override string Solve(IEnumerable<string> lines)
     {
-        File.ReadLines(inputPath)
+        lines
             .Select(l => l.Split(':')[1])
             .Select(l => l
                 .Split(" | ")

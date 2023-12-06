@@ -5,15 +5,13 @@ namespace AoC_2023.Solutions;
 
 // --- Day 5: If You Give A Seed A Fertilizer - Part 1 ---
 
-public class D05P01 : SolutionBase
+public class D05P01 : Solution
 {
     public override string ExampleAnswer => "35";
     public override string Answer => "403695602";
 
-    public override string Solve(string inputPath)
+    public override string Solve(IEnumerable<string> lines)
     {
-        var lines = File.ReadLines(inputPath).ToList();
-
         var categories = lines
             .First()
             .Split(": ")[1]

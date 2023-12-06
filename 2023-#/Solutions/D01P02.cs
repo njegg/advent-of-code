@@ -2,9 +2,11 @@ using System.Data;
 
 namespace AoC_2023.Solutions;
 
-// --- Day 1: Trebuchet?! Part 2 --- //
 
-public class D01P02 : SolutionBase
+// --- Day 1: Trebuchet?! - Part 2 --- //
+
+
+public class D01P02 : Solution
 {
     public override string ExampleAnswer => "281";
     public override string Answer => "54504";
@@ -14,9 +16,9 @@ public class D01P02 : SolutionBase
             .Select((n, i) => new State(n, i + 1))
             .ToList();
     
-    public override string Solve(string inputPath)
+    public override string Solve(IEnumerable<string> lines)
     {
-        return File.ReadLines(inputPath)
+        return lines
             .ToList()
             .Select(FindDigits)
             .Sum()

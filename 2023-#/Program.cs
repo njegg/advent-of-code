@@ -51,7 +51,7 @@ internal static class Program
         SolvePuzzle(o.WithPart(2));
     }
 
-    private static SolutionBase? GetSolutionInstance(int day, int part)
+    private static Solution? GetSolutionInstance(int day, int part)
     {
         var solutionName = $"{nameof(AoC_2023)}.{nameof(Solutions)}.D{day:00}P{part:00}";
         
@@ -60,18 +60,18 @@ internal static class Program
         
         var solution = Activator.CreateInstance(type) ?? throw new IOException($"Could not load {solutionName}"); ;
 
-        return (SolutionBase)solution;
+        return (Solution)solution;
     }
 
     private static void PrintSolution(
-        SolutionBase solution,
+        Solution solution,
         Options o,
         string inputPath
     ) {
         Stopwatch? time = null;
 
         if (o.Time) time = Stopwatch.StartNew();
-        var result = solution.Solve(inputPath);
+        var result = solution.Solve(File.ReadLines(inputPath));
         if (o.Time) time?.Stop();
         
         var paddedTimeMs = time is null ? 
