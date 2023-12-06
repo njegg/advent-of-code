@@ -25,7 +25,7 @@ internal static class Program
 
                 if (o.Day == 0) SolveAllDays(o);
                 else if (o.Part == 0) SolveOneDay(o);
-                else SolvePuzzle(o);
+                else SolvePuzzle(o.WithSingle(true));
             });
     }
 
@@ -76,20 +76,41 @@ internal static class Program
         
         var paddedTimeMs = time is null ? 
             "" : $"{time.ElapsedMilliseconds / 1000.0f:F3}s".PadLeft(24 - result.Length, ' ');
+        
+        // Print day numbers
+        Console.ForegroundColor = ConsoleColor.DarkGray;
 
+        if (o is { Single: false, Part: 1 } ) Console.Write($"{o.Day,-4}");
+        if (o is { Single: false, Part: 2 } ) Console.Write($"{' ',-4}");
+
+        // Print result
         var answer = o.Example ? solution.ExampleAnswer : solution.Answer;
-        if (answer is not null)
+
+        if (answer is not null) // No color if answer is not defined
         {
-            Console.ForegroundColor = answer == result ? ConsoleColor.Green : ConsoleColor.Red;
+            Console.ForegroundColor = answer == result ?
+                ConsoleColor.Green :
+                ConsoleColor.Red;
         }
         
-        Console.Write(result);
+        Console.Write($"{result}");
+
         
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        Console.Out.Flush(); 
-        Console.WriteLine(paddedTimeMs);
+
+        if (time is not null)
+        {
+            Console.Write(paddedTimeMs);
+            
+            if (answer == result && !o.Example)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.Write(" *");
+            }
+        }
         
         Console.ResetColor();
+        Console.WriteLine();
     }
 }
 
@@ -129,13 +150,7 @@ class Options
     )]
     public bool Example { get; set; }
 
-    [Option(
-        shortName: 'a',
-        longName: "all",
-        Required = false,
-        HelpText = "Run em all"
-    )]
-    public bool All { get; set; }
+    public bool Single { get; set; }
 
     public Options WithDay(int day)
     {
@@ -146,6 +161,12 @@ class Options
     public Options WithPart(int part)
     {
         Part = part;
+        return this;
+    }
+    
+    public Options WithSingle(bool single)
+    {
+        Single = single;
         return this;
     }
 }

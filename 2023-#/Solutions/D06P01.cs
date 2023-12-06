@@ -7,6 +7,7 @@ namespace AoC_2023.Solutions;
 public class D06P01 : Solution
 {
     public override string ExampleAnswer => "288";
+    public override string Answer => "74698";
 
     public override string Solve(IEnumerable<string> lines)
     {
@@ -30,12 +31,11 @@ public class D06P01 : Solution
             var record = distances[i];
             var time = times[i];
 
-            var waysToBeat = Enumerable.Range(0, times[i])
-                .Select(hold => hold * (time - hold))
-                .Where(dist => dist > record)
-                .Count();
+            var min = (int) ((time - Math.Sqrt(time*time - 4*record)) / 2) + 1;
 
-            if (waysToBeat > 0) res *= waysToBeat;
+            var waysToBeatWife = time - min + 1 - min;
+
+            if (waysToBeatWife > 0) res *= waysToBeatWife;
         }
 
         return res.ToString();

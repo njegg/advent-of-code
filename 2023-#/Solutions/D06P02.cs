@@ -18,7 +18,7 @@ public class D06P02 : Solution
         var time = input[0];
         var record = input[1];
 
-        int min = (int) ((time - Math.Sqrt(time*time - 4*record)) / 2) + 1;
+        var min = (int) ((time - Math.Sqrt(time*time - 4*record)) / 2) + 1;
 
         return $"{time - min + 1 - min}";
     }

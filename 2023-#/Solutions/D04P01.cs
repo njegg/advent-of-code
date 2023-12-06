@@ -4,8 +4,9 @@ namespace AoC_2023.Solutions;
 
 public class D04P01 : Solution
 {
-    public override string ExampleAnswer => "142";
-
+    public override string ExampleAnswer => "13";
+    public override string Answer => "24848";
+    
     public override string Solve(IEnumerable<string> lines)
     {
         return lines
