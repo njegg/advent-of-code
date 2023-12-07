@@ -1,17 +1,30 @@
 namespace AoC_2023.Solutions;
 
-// --- Day T: - Part 1 --- //
+// --- Day 7: - Part 1 --- //
 
 public class D07P01 : Solution
 {
+    public string ExampleAnswer = "6440";
+
+    private record struct Hand(int[] Values, int Strength, long Bid);
+    
     public override string Solve(IEnumerable<string> lines)
     {
         var hands = lines
             .Select(l => l.Split())
-            .Select(l => new { Hand = HandStrength(ToValues(l[0])), Bid = int.Parse(l[1]) })
+            .Select(l =>
+            {
+                var values = ToValues(l[0]);
+                return new Hand(values, HandStrength(values), long.Parse(l[1]));
+            })
             .ToList();
         
-        hands.Sort((x, y) => y.Hand - x.Hand);
+        hands.Sort(HandCompare);
+        
+        // foreach (var hand in hands)
+        // {
+        //     Console.WriteLine($"{string.Join(' ', hand.Values)}: {hand.Strength}");
+        // }
 
         return hands
             .Select((h, i) => h.Bid * (i + 1))
@@ -46,26 +59,49 @@ public class D07P01 : Solution
         }
 
         var unique = 5;
-        var strength = 0;
+        var strengthSum = 0;
 
         foreach (var count in set)
         {
-            unique -= count;
-            if (count < 2) continue;
+            if (count == 0) continue;
+            var strength = count switch
+            {
+                1 => 0,
+                2 => 1,
+                3 => 8,
+                4 => 16,
+                5 => 32
+            };
+            
+            unique--;
 
-            strength += 1 << count;
+            strengthSum += strength;
         }
         
-        return unique + strength;
+        return (1 << unique) + strengthSum;
+    }
+
+    private static int HandCompare(Hand handA, Hand handB)
+    {
+        var cmp = handA.Strength - handB.Strength;
+        
+        if (cmp != 0) return cmp;
+
+        for (var i = 0; i < 5; i++)
+        {
+            if (handA.Values[i] != handB.Values[i]) return handA.Values[i] - handB.Values[i];
+        }
+
+        return 0;
     }
     
     /*
      *  hc => 1 1 1 1 1     0
-     *  op => 2 1 1 1       1 4
-     *  tp => 2 2 1 1       1 8
-     *  tk => 3 1 1         2 8
-     *  fh => 3 2           3 8 4
-     *  4k => 4 1           3 16
-     *  5  => 5             4 32
+     *  op => 2 1 1 1       2 1
+     *  tp => 2 2 1         4 2
+     *  tk => 3 1 1         4 8
+     *  fh => 3 2           8 8 1
+     *  4k => 4 1           8 16
+     *  5  => 5             16 32
      */ 
 }
