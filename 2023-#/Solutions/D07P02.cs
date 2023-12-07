@@ -2,10 +2,10 @@ namespace AoC_2023.Solutions;
 
 // --- Day 7: - Part 2 --- //
 
-public class D07P01 : Solution
+public class D07P02 : Solution
 {
-    public override string ExampleAnswer => "6440";
-    public override string Answer => "251806792";
+    public override string ExampleAnswer => "5905";
+    public override string Answer => "252113488";
     
     private enum Cards
     {
@@ -65,7 +65,7 @@ public class D07P01 : Solution
                 'A' => 14,
                 'K' => 13,
                 'Q' => 12,
-                'J' => 11,
+                'J' => 0,
                 'T' => 10,
                 _ => c - '0'
             })
@@ -84,6 +84,7 @@ public class D07P01 : Solution
 
         var magicPadding = 5;
         var strengthSum = 0;
+        var jockerCount = Set[0];
 
         foreach (var count in Set.Skip(1))
         {
@@ -93,9 +94,48 @@ public class D07P01 : Solution
             strengthSum += CardsValues[count - 1];
         }
 
+        magicPadding -= jockerCount;
+        
         magicPadding = magicPadding == 0 ? 0 : (1 << magicPadding);
+        var strength = magicPadding + strengthSum;
 
-        return magicPadding + strengthSum;
+        return (int)MaxStrengthFor(jockerCount, (HandType)strength);
+    }
+
+    private static HandType MaxStrengthFor(int jockerCount, HandType strength)
+    {
+        if (jockerCount == 0) return strength;
+
+        return strength switch
+        {
+            HandType.HighCard => jockerCount switch
+            {
+                1 => HandType.OnePair,
+                2 => HandType.ThreeOfAKind,
+                3 => HandType.FourOfAKind,
+                4 => HandType.FiveOfAKind,
+                5 => HandType.FiveOfAKind,
+                _ => 0,
+            },
+            HandType.OnePair => jockerCount switch
+            {
+                1 => HandType.ThreeOfAKind,
+                2 => HandType.FourOfAKind,
+                3 => HandType.FiveOfAKind,
+                _ => 0,
+            },
+            HandType.TwoPairs => HandType.FullHouse,
+            HandType.ThreeOfAKind => jockerCount switch
+            {
+                1 => HandType.FourOfAKind,
+                2 => HandType.FiveOfAKind,
+                _ => 0,
+            },
+            HandType.FullHouse => strength,
+            HandType.FiveOfAKind => strength,
+            HandType.FourOfAKind => HandType.FiveOfAKind,
+            _ => 0,
+        };
     }
 
     private static int HandCompare(Hand handA, Hand handB)
