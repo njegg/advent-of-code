@@ -9,4 +9,12 @@ public static class Extensions
             source[i] = projection(source[i]);
         }
     }
+    
+    public static IEnumerable<T> RepeatForever<T>(this IEnumerable<T> sequence)
+    {
+        var enumerable = sequence as T[] ?? sequence.ToArray();
+        while (true)
+            foreach (var item in enumerable)
+                yield return item;
+    }
 }

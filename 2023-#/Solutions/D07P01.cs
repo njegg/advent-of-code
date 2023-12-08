@@ -1,6 +1,6 @@
 namespace AoC_2023.Solutions;
 
-// --- Day 7: - Part 2 --- //
+// --- Day 7: - Part 1 --- //
 
 public class D07P01 : Solution
 {
