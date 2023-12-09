@@ -33,7 +33,13 @@ internal static class Program
     {
         var inputPath = $"Input/d{o.Day}_" + (o.Example ? "example" : "input");
         
-        if (o.Example && o is { Day: 1, Part: 2 })
+        if (
+            o.Example &&
+            (
+                o is { Day: 1, Part: 2 } ||
+                o is { Day: 8, Part: 2 }
+            )
+           )
             inputPath += "_2";
 
         if (GetSolutionInstance(o.Day, o.Part) is { } s) PrintSolution(s, o, inputPath);

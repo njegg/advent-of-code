@@ -1,5 +1,10 @@
-LLR
+LR
 
-AAA = (BBB, BBB)
-BBB = (AAA, ZZZ)
-ZZZ = (ZZZ, ZZZ)
+BBA = (BBB, XXX)
+BBB = (XXX, BBZ)
+BBZ = (BBB, XXX)
+UUA = (UUB, XXX)
+UUB = (UUC, UUC)
+UUC = (UUZ, UUZ)
+UUZ = (UUB, UUB)
+XXX = (XXX, XXX)
