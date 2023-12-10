@@ -35,10 +35,9 @@ internal static class Program
         
         if (
             o.Example &&
-            (
-                o is { Day: 1, Part: 2 } ||
-                o is { Day: 8, Part: 2 }
-            )
+            o is
+                { Day: 1, Part: 2 } or
+                { Day: 8, Part: 2 }
            )
             inputPath += "_2";
 
