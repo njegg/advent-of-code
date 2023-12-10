@@ -17,4 +17,9 @@ public static class Extensions
             foreach (var item in enumerable)
                 yield return item;
     }
+    
+    public static IEnumerable<(T e, int i)> WithIndex<T>(this IEnumerable<T> source)
+    {
+        return source.Select((item, index) => (item, index));
+    }
 }

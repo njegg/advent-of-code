@@ -37,7 +37,8 @@ internal static class Program
             o.Example &&
             o is
                 { Day: 1, Part: 2 } or
-                { Day: 8, Part: 2 }
+                { Day: 8, Part: 2 } or
+                { Day: 10, Part: 2 }
            )
             inputPath += "_2";
 
