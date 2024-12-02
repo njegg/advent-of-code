@@ -60,7 +60,7 @@ public record Day01() : Solver(AnswerOne: "2378066", AnswerTwo: "18934359")
 
     protected override List<(string Expected, string Input)> PartTwoExamples => [
         (
-            Expected: "3", 
+            Expected: "31",
             Input:
             """
             3   4
