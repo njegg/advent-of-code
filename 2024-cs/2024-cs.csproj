@@ -22,6 +22,9 @@
       <None Update="Input\input04">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Input\input05">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

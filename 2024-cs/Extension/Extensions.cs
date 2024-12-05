@@ -33,4 +33,9 @@ public static class Extensions
     {
         return source.Select((item, index) => (item, index));
     }
+    
+    public static string Stringify<T>(this IEnumerable<T> source, string by = ", ")
+    {
+        return string.Join(by, source);
+    }
 }
