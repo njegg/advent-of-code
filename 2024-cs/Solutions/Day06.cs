@@ -6,20 +6,21 @@ namespace _2024_cs.Solutions;
 // --- Day 5: Print Queue --- //
 
 
-public record Day06() : Solver(AnswerOne: null, AnswerTwo: null)
+public record Day06() : Solver(AnswerOne: "4973", AnswerTwo: "1482")
 {
     private static readonly int[] DirectionsX = [0, 1, 0, -1];
     private static readonly int[] DirectionsY = [-1, 0, 1, 0];
+    
     public override string PartOne(IEnumerable<string> input)
     {
-        var map = input.Select(row => row.ToList()).ToList();
+        var map = input.Select(row => row.ToCharArray()).ToArray();
         var (x, y) = map
             .WithIndex()
-            .Select((row, y) => (x: row.IndexOf('^'), y))
+            .Select((row, y) => (x: Array.IndexOf(row, '^'), y))
             .First(coord => coord.x != -1);
-
+        
         var visitedMap = map.Select(row => row.Select(_ => 0).ToList()).ToList();
-
+        
         var dirIndex = 0;
         
         var infiniteLoopProtec = 1000000;
@@ -34,36 +35,39 @@ public record Day06() : Solver(AnswerOne: null, AnswerTwo: null)
                 dirIndex = (dirIndex + 1) % DirectionsX.Length;
                 continue;
             }
-
+        
             visitedMap[y][x] = 1;
-
+        
             x += DirectionsX[dirIndex];
             y += DirectionsY[dirIndex];
         }
-
+        
         return visitedMap.Select(l => l.Sum()).Sum().ToString();
     }
 
     public override string PartTwo(IEnumerable<string> input)
     {
-        var map = input.Select(l => l.ToList()).ToList();
+        var map = input.Select(l => l.ToCharArray()).ToArray();
         var (startX, startY) = map
             .WithIndex()
-            .Select((row, y) => (x: row.IndexOf('^'), y))
+            .Select((row, y) => (x: Array.IndexOf(row, '^'), y))
             .First(coord => coord.x != -1);
 
-        var visitedMap = map.Select(row => row.Select(_ => (visited: false, direction: Direction.Up)).ToList()).ToList();
+        var visitedMap = new Direction[map.Length * map[0].Length];
+        
         var loopCount = 0;
 
-        for (var y = 0; y < map.Count; y++)
+        for (var y = 0; y < map.Length; y++)
         {
-            for (var x = 0; x < map[0].Count; x++)
+            for (var x = 0; x < map[0].Length; x++)
             {
                 if ((x == startX && y == startY) || map[y][x] == '#') continue;
 
+                Array.Fill(visitedMap, Direction.None);
                 map[y][x] = '#';
-                ClearVisitedMap(visitedMap);
-                loopCount += Traverse(map, visitedMap, startX, startY, Direction.Up) == TraverseResult.Loop ? 1 : 0;
+
+                var traverseResult = Traverse(map, visitedMap, startX, startY, Direction.Up);
+                if (traverseResult == TraverseResult.Loop) loopCount++;
 
                 map[y][x] = '.';
             }
@@ -74,42 +78,28 @@ public record Day06() : Solver(AnswerOne: null, AnswerTwo: null)
 
     private enum TraverseResult { Wall, OutOfBounds, Loop }
 
-    private static TraverseResult Traverse(List<List<char>> map, List<List<(bool visited, Direction direction)>> visitedMap, int x, int y, Direction direction)
+    private static TraverseResult Traverse(char[][] map, Direction[] visitedMap, int x, int y, Direction direction)
     {
+        var visitedIndex = y * map[0].Length + x;
+        
         if (OutOfBounds(map, x, y)) return TraverseResult.OutOfBounds;
-        if (visitedMap[y][x].visited && visitedMap[y][x].direction == direction) return TraverseResult.Loop;
+        if (visitedMap[visitedIndex] == direction) return TraverseResult.Loop;
         if (map[y][x] == '#') return TraverseResult.Wall;
 
-        visitedMap[y][x] = (true, direction);
+        visitedMap[visitedIndex] = direction;
 
         while (true)
         {
-            var res = Traverse(map, visitedMap, x + direction.XY().x, y + direction.XY().y, direction);
+            var res = Traverse(map, visitedMap, x + direction.X(), y + direction.Y(), direction);
 
-            if (res == TraverseResult.Wall)
-            {
-                direction = direction.RotateClockwise();
-            }
-            else
-            {
-                return res;
-            }
+            if (res != TraverseResult.Wall) return res;
+
+            direction = direction.RotateClockwise();
         }
     }
 
-    private static void ClearVisitedMap(List<List<(bool Visited, Direction Direction)>> visitedMap)
-    {
-        for (var i = 0; i < visitedMap.Count; i++)
-        {
-            for (var j = 0; j < visitedMap[0].Count; j++)
-            {
-                visitedMap[i][j] = (false, Direction.Up);
-            }
-        }
-    }
-    
-    private static bool OutOfBounds(List<List<char>> map, int x, int y) 
-        => y < 0 || x < 0 || y >= map.Count || x >= map[0].Count;
+    private static bool OutOfBounds(char[][] map, int x, int y) 
+        => y < 0 || x < 0 || y >= map.Length || x >= map[0].Length;
 
     protected override List<(string Expected, string Input)> PartOneExamples => [
         (
@@ -150,21 +140,23 @@ public record Day06() : Solver(AnswerOne: null, AnswerTwo: null)
     ];
 }
 
-public enum Direction { Up, Down, Right, Left }
+public enum Direction { None, Up, Down, Right, Left }
     
-public static class Extension
+public static partial class Extension
 {
-    public static (int x, int y) XY(this Direction dir)
+    public static int X(this Direction dir) => dir switch
     {
-        return dir switch
-        {
-            Direction.Up => (0, -1),
-            Direction.Down => (0, 1),
-            Direction.Right => (1, 0),
-            Direction.Left => (-1, 0),
-            _ => throw new ArgumentOutOfRangeException(nameof(dir), dir, null)
-        };
-    }
+        Direction.Right => 1,
+        Direction.Left => -1,
+        _ => 0
+    };
+    
+    public static int Y(this Direction dir) => dir switch
+    {
+        Direction.Up => -1,
+        Direction.Down => 1,
+        _ => 0
+    };
     
     public static Direction RotateClockwise(this Direction dir)
     {

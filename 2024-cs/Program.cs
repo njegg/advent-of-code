@@ -111,7 +111,7 @@ internal static class Program
         Console.Write($"{result,-16}");
         
         Console.ForegroundColor = ConsoleColor.DarkGray;
-        if (!o.TimeOff) Console.Write($"{displayTime,10}");
+        if (!o.TimeOff) Console.Write($"{displayTime,13}");
         
         Console.ForegroundColor = ConsoleColor.Yellow;
         if (isCorrect && !o.TimeOff) Console.Write(" *");
