@@ -52,25 +52,30 @@ public record Day06() : Solver(AnswerOne: "4973", AnswerTwo: "1482")
             .WithIndex()
             .Select((row, y) => (x: Array.IndexOf(row, '^'), y))
             .First(coord => coord.x != -1);
-
+        
         var visitedMap = new Direction[map.Length * map[0].Length];
         
+        Traverse(map, visitedMap, startX, startY, Direction.Up);
+        
+        var possibleWalls = visitedMap
+            .WithIndex()
+            .Where(d => d.e != Direction.None && d.i != startY * map[0].Length + startX)
+            .Select(d => (y: d.i / map[0].Length, x: d.i % map[0].Length))
+            .ToList();
+        
+        Array.Fill(visitedMap, Direction.None);
+        
         var loopCount = 0;
-
-        for (var y = 0; y < map.Length; y++)
+        foreach (var wall in possibleWalls)
         {
-            for (var x = 0; x < map[0].Length; x++)
-            {
-                if ((x == startX && y == startY) || map[y][x] == '#') continue;
+            var (y, x) = wall;
+            map[y][x] = '#';
+            Array.Fill(visitedMap, Direction.None);
 
-                Array.Fill(visitedMap, Direction.None);
-                map[y][x] = '#';
+            var traverseResult = Traverse(map, visitedMap, startX, startY, Direction.Up);
+            if (traverseResult == TraverseResult.Loop) loopCount++;
 
-                var traverseResult = Traverse(map, visitedMap, startX, startY, Direction.Up);
-                if (traverseResult == TraverseResult.Loop) loopCount++;
-
-                map[y][x] = '.';
-            }
+            map[y][x] = '.';
         }
 
         return loopCount.ToString();
