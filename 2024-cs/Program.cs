@@ -1,12 +1,17 @@
 ﻿using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using CommandLine;
 
 namespace _2024_cs;
 
 internal static class Program
 {
+    private static double TotalTime = 0;
+    
     public static void Main(string[] args)
     {
+        Console.WriteLine(Tree);
+        
         Parser.Default.ParseArguments<Options>(args)
             .WithParsed(o =>
             {
@@ -22,7 +27,6 @@ internal static class Program
                     case { Example: true }: SolveOnExamples(o); break;
                         
                     case { Part: 0 }:
-                        o.IsSingle(true);
                         Solve(o.WithPart(1));
                         Solve(o.WithPart(2));
                         break;
@@ -42,7 +46,8 @@ internal static class Program
         o.Example = !o.Example;
     }
 
-    private static void SolveAllDays(Options o) =>
+    private static void SolveAllDays(Options o)
+    {
         Enumerable
             .Range(1, 25)
             .ToList()
@@ -53,6 +58,14 @@ internal static class Program
                 Solve(o.WithPart(2));
             });
 
+        if (!o.TimeOff)
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine("--------- Total Time ----------");
+            var time = $"{TotalTime:F3}";
+            Console.WriteLine($"{time,26} ms");
+        }
+    }
     private static void SolveOnExamples(Options o)
     {
         var solver = GetSolverInstance(o);
@@ -90,27 +103,27 @@ internal static class Program
             .FromTicks(stopwatch.ElapsedTicks / 100)
             .Ticks * 1d / TimeSpan.TicksPerMillisecond;
 
+        TotalTime += timeInMs;
+        
         var isCorrect = answer == result;
 
-        var displayTime = o.TimeOff
-            ? string.Empty
-            : $"{timeInMs:F3} ms";
-        
-        Console.ForegroundColor = ConsoleColor.DarkGray;
-
-        if (o is { Single: false, Part: 1 } ) Console.Write($"{o.Day,-4}");
-        if (o is { Single: false, Part: 2 } ) Console.Write($"{' ',-4}");
+        if (o is { Part: 1 } or { Part: 2, Single: true })
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine($"----------- Day {o.Day:00} ------------");
+        }
         
         if (answer != null) // No color if answer is unknown
         {
-            Console.ForegroundColor = isCorrect ?
-                ConsoleColor.Green :
-                ConsoleColor.Red;
+            Console.ForegroundColor = isCorrect 
+                ? ConsoleColor.Green
+                : ConsoleColor.Red;
         }
         
         Console.Write($"{result,-16}");
         
         Console.ForegroundColor = ConsoleColor.DarkGray;
+        var displayTime = $"{timeInMs:F3} ms";
         if (!o.TimeOff) Console.Write($"{displayTime,13}");
         
         Console.ForegroundColor = ConsoleColor.Yellow;
@@ -143,6 +156,26 @@ internal static class Program
         Console.WriteLine(message);
         Environment.Exit(1);
     }
+    
+    private const string G = "\u001b[32m";      // ANSI escape code for green
+    private const string R = "\u001b[31m";        // ANSI escape code for red
+    private const string B = "\u001b[34m";       // ANSI escape code for blue
+    private const string D = "\u001b[90m";   // ANSI escape code for dark gray
+    private const string X = "\u001b[0m";       // Reset to default console color
+    private const string O = "\u001b[38;2;255;165;0m"; // RGB color for orange
+    private const string Y = "\u001b[38;2;255;255;102m";
+
+    private const string Tree =
+        $"""
+        
+               {Y}\|/
+              --*--{G}    
+               >{R}o{G}<   {G}Advent Of Code{G}
+              >>{B}O{G}<<      {Y}*2024*{G}
+             >{O}o{G}<<<{B}O{G}<
+            >{R}@{G}>>>{Y}*{G}<<<{X}
+            
+        """;
 }
 
 class Options

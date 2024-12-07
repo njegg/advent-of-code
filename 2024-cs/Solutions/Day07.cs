@@ -42,10 +42,8 @@ public record Day07() : Solver(AnswerOne: "882304362421", AnswerTwo: "1451490667
         if (values.Length == 0) return accumulator == target;
         if (accumulator > target) return false;
         
-        var x = values[0];
-
-        return CanSolve(target, x + accumulator, values[1..])
-               | CanSolve(target, x * accumulator, values[1..]);
+        return CanSolve(target, values[0] + accumulator, values[1..])
+               | CanSolve(target, values[0] * accumulator, values[1..]);
     }
     
     private static bool CanSolveWithConcat(long target, long accumulator, Span<long> values)
@@ -53,11 +51,9 @@ public record Day07() : Solver(AnswerOne: "882304362421", AnswerTwo: "1451490667
         if (values.Length == 0) return accumulator == target;
         if (accumulator > target) return false;
         
-        var x = values[0];
-
-        return CanSolveWithConcat(target, x + accumulator, values[1..])
-               | CanSolveWithConcat(target, x * accumulator, values[1..])
-               | CanSolveWithConcat(target, Concat(accumulator, x), values[1..]);
+        return CanSolveWithConcat(target, values[0] + accumulator, values[1..])
+               | CanSolveWithConcat(target, values[0] * accumulator, values[1..])
+               | CanSolveWithConcat(target, Concat(accumulator, values[0]), values[1..]);
     }
 
     private static long Concat(long x, long y) 
