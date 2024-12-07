@@ -15,9 +15,9 @@ public record Day07() : Solver(AnswerOne: "882304362421", AnswerTwo: "1451490667
             .Select(l => l.Split(": "))
             .Select(l => (
                 Target: long.Parse(l[0]),
-                Values: l[1].Split(" ").Select(long.Parse).ToArray().AsMemory()
+                Values: l[1].Split(" ").Select(int.Parse).ToList()
             ))
-            .Where(l => CanSolve(l.Target, l.Values.Span[0], l.Values.Span[1..]))
+            .Where(l => CanSolve(l.Target, l.Values[0], l.Values))
             .Select(l => l.Target)
             .Sum()
             .ToString();
@@ -29,31 +29,24 @@ public record Day07() : Solver(AnswerOne: "882304362421", AnswerTwo: "1451490667
             .Select(l => l.Split(": "))
             .Select(l => (
                 Target: long.Parse(l[0]),
-                Values: l[1].Split(" ").Select(long.Parse).ToArray().AsMemory()
+                Values: l[1].Split(" ").Select(int.Parse).ToList()
             ))
-            .Where(l => CanSolveWithConcat(l.Target, l.Values.Span[0], l.Values.Span[1..]))
+            .Where(l => CanSolve(l.Target, l.Values[0], l.Values, canConcat: true))
             .Select(l => l.Target)
             .Sum()
             .ToString();
     }
-    
-    private static bool CanSolve(long target, long accumulator, Span<long> values)
+
+    private static bool CanSolve(long target, long accumulator, List<int> values, int i = 1, bool canConcat = false)
     {
-        if (values.Length == 0) return accumulator == target;
+        if (i == values.Count) return accumulator == target;
         if (accumulator > target) return false;
-        
-        return CanSolve(target, values[0] + accumulator, values[1..])
-               | CanSolve(target, values[0] * accumulator, values[1..]);
-    }
-    
-    private static bool CanSolveWithConcat(long target, long accumulator, Span<long> values)
-    {
-        if (values.Length == 0) return accumulator == target;
-        if (accumulator > target) return false;
-        
-        return CanSolveWithConcat(target, values[0] + accumulator, values[1..])
-               | CanSolveWithConcat(target, values[0] * accumulator, values[1..])
-               | CanSolveWithConcat(target, Concat(accumulator, values[0]), values[1..]);
+
+        var x = values[i];
+
+        return CanSolve(target, x + accumulator, values, i + 1, canConcat)
+               | CanSolve(target, x * accumulator, values, i + 1, canConcat)
+               | (canConcat && CanSolve(target, Concat(accumulator, x), values, i + 1, canConcat));
     }
 
     private static long Concat(long x, long y) 
