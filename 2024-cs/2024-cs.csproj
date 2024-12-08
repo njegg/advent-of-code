@@ -10,6 +10,7 @@
 
     <ItemGroup>
       <PackageReference Include="CommandLineParser" Version="2.9.1" />
+      <PackageReference Include="xunit" Version="2.9.2" />
     </ItemGroup>
 
     <ItemGroup>

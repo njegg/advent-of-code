@@ -1,10 +1,7 @@
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
-
 namespace _2024_cs.Solutions;
 
 
-// --- Day 5: Print Queue --- //
+// --- Day 7: Bridge Repair --- //
 
 
 public record Day07() : Solver(AnswerOne: "882304362421", AnswerTwo: "145149066755184")

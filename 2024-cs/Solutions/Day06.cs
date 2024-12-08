@@ -3,7 +3,7 @@ using _2024_cs.Extension;
 namespace _2024_cs.Solutions;
 
 
-// --- Day 5: Print Queue --- //
+// --- Day 6: Guard Gallivant --- //
 
 
 public record Day06() : Solver(AnswerOne: "4973", AnswerTwo: "1482")

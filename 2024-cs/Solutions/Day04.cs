@@ -1,6 +1,8 @@
 namespace _2024_cs.Solutions;
 
+
 // --- Day 4: Ceres Search --- //
+
 
 public record Day04() : Solver(AnswerOne: "2603", AnswerTwo: "1965")
 {
