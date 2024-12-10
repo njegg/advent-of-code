@@ -67,54 +67,49 @@ public record Day09() : Solver(AnswerOne: "6356833654075", AnswerTwo: "638991179
         public int FileId;
         public int Size;
         public int Index;
-        
-        public bool IsFree => FileId == -1;
-        public static Block None => new Block{ FileId = -1, Size = 0, Index = 0 };
     }
-
+    
     public override string PartTwo(IEnumerable<string> input)
     {
         var diskMap = input.First().Select(c => c - '0').ToList();
 
-        var blocks = new Block[diskMap.Count];
+        var freeBlocks = new Block[diskMap.Count / 2];
+        var dataBlocks = new Block[diskMap.Count / 2 + 1];
+        
         var blockIndex = 0;
-
         for (var i = 0; i < diskMap.Count; i++)
         {
             var size = diskMap[i];
-            
-            blocks[i] = new Block{
-                FileId = i % 2 == 0 ? i / 2 : -1,
-                Size = size,
-                Index = blockIndex
-            };
 
+            if (i % 2 == 0)
+                dataBlocks[i / 2] = new Block{ FileId = i / 2, Size = size, Index = blockIndex };
+            else
+                freeBlocks[(i - 1) / 2] = new Block{ Size = size, Index = blockIndex };
+            
             blockIndex += size;
         }
 
-        for (var di = blocks.Length - 1; di > 0; di--)
+        for (var di = dataBlocks.Length - 1; di >= 0; di--)
         {
-            ref var dataBlock = ref blocks[di];
-            if (dataBlock.IsFree) continue;
+            ref var dataBlock = ref dataBlocks[di];
 
-            for (var fi = 1; fi < di; fi++)
+            for (var fi = 0; fi < freeBlocks.Length; fi++)
             {
-                ref var freeBlock = ref blocks[fi];
-                if (!freeBlock.IsFree) continue;
+                ref var freeBlock = ref freeBlocks[fi];
                 if (freeBlock.Size < dataBlock.Size) continue;
+                if (freeBlock.Index > dataBlock.Index) break;
                 
                 // For the calculation, no need to actually move the block
                 // Updating where it is enough
                 dataBlock.Index = freeBlock.Index;
                 freeBlock.Index += dataBlock.Size;
                 freeBlock.Size -= dataBlock.Size;
-
+                
                 break;
             }
         }
         
-        return blocks
-            .Where(b => !b.IsFree)
+        return dataBlocks
             .Aggregate(seed: 0UL, (a, b) => a + CalculateChecksum(b.Index, b.Size, b.FileId))
             .ToString();
     }

@@ -84,4 +84,14 @@ public static class Extensions
 
         return counter;
     }
+    
+    public static Dictionary<T, int> CountDown<T>(this Dictionary<T, int> counter, T key) where T : notnull
+    {
+        if (counter.TryGetValue(key, out var value))
+        {
+            counter[key] = --value;
+        }
+
+        return counter;
+    }
 }
