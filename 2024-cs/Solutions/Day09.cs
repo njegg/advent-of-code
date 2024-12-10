@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace _2024_cs.Solutions;
 
 
@@ -57,11 +59,6 @@ public record Day09() : Solver(AnswerOne: "6356833654075", AnswerTwo: "638991179
         return checksum.ToString();
     }
 
-    private static ulong CalculateChecksum(int index, int count, int fileId)
-    {
-        return Enumerable.Range(index, count).Aggregate(seed: 0UL, (a, i) => a + (ulong)i * (ulong)fileId);
-    }
-    
     private struct Block
     {
         public int FileId;
@@ -113,6 +110,9 @@ public record Day09() : Solver(AnswerOne: "6356833654075", AnswerTwo: "638991179
             .Aggregate(seed: 0UL, (a, b) => a + CalculateChecksum(b.Index, b.Size, b.FileId))
             .ToString();
     }
+    
+    private static ulong CalculateChecksum(int index, int count, int fileId)
+     => (ulong)fileId * (ulong)Enumerable.Range(index, count).Sum();
 
     protected override List<(string Expected, string Input)> PartOneExamples => [
         (
