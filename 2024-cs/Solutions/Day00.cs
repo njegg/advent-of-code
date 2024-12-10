@@ -4,7 +4,7 @@ namespace _2024_cs.Solutions;
 //  //
 
 
-public record Day00() : Solver(AnswerOne: "400", AnswerTwo: "1280")
+public record Day00() : Solver(AnswerOne: null, AnswerTwo: null)
 {
     public override string PartOne(IEnumerable<string> input)
     {
