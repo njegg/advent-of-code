@@ -126,8 +126,7 @@ internal static class Program
         var displayTime = $"{timeInMs:F3} ms";
         if (!o.TimeOff) Console.Write($"{displayTime,13}");
         
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        if (isCorrect && !o.TimeOff) Console.Write(" *");
+        if (isCorrect && !o.TimeOff) Console.Write($" {Y}*");
         
         Console.ResetColor();
         Console.WriteLine();
@@ -157,13 +156,12 @@ internal static class Program
         Environment.Exit(1);
     }
     
-    private const string G = "\u001b[32m";      // ANSI escape code for green
-    private const string R = "\u001b[31m";        // ANSI escape code for red
-    private const string B = "\u001b[34m";       // ANSI escape code for blue
-    private const string D = "\u001b[90m";   // ANSI escape code for dark gray
-    private const string X = "\u001b[0m";       // Reset to default console color
-    private const string O = "\u001b[38;2;255;165;0m"; // RGB color for orange
+    private const string G = "\u001b[32m";
+    private const string R = "\u001b[31m";
+    private const string B = "\u001b[34m";
+    private const string O = "\u001b[38;2;255;165;0m";
     private const string Y = "\u001b[38;2;255;255;102m";
+    private const string X = "\u001b[0m";
 
     private const string Tree =
         $"""

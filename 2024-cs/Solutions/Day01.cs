@@ -79,9 +79,8 @@ public static class Extensions
     public static Dictionary<T, int> CountUp<T>(this Dictionary<T, int> counter, T key) where T : notnull
     {
         if (counter.TryAdd(key, 1)) return counter;
-
+        
         counter[key] += 1;
-
         return counter;
     }
     
@@ -89,7 +88,28 @@ public static class Extensions
     {
         if (counter.TryGetValue(key, out var value))
         {
-            counter[key] = --value;
+            counter[key] = value - 1;
+            if (counter[key] == 0) counter.Remove(key);
+        }
+
+        return counter;
+    }
+    
+    public static Dictionary<T, long> CountUp<T>(this Dictionary<T, long> counter, T key, long amount = 1) where T : notnull
+    {
+        counter.TryAdd(key, 0);
+        
+        counter[key] += amount;
+        return counter;
+    }
+    
+    public static Dictionary<T, long> CountDown<T>(this Dictionary<T, long> counter, T key, long amount = 1) where T : notnull
+    {
+        if (counter.TryGetValue(key, out var value))
+        {
+            counter[key] = value - amount;
+            if (counter[key] == 0) counter.Remove(key);
+            else if (counter[key] < 0) throw new Exception($"counter[{key}] - {amount} = {counter[key]} (<0)");
         }
 
         return counter;
