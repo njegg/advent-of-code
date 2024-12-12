@@ -1,5 +1,3 @@
-using _2024_cs.Extension;
-
 namespace _2024_cs.Solutions;
 
 

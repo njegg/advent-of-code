@@ -10,6 +10,8 @@ public record Day08() : Solver(AnswerOne: "400", AnswerTwo: "1280")
     {
         public static Vec2 operator +(Vec2 p, Vec2 q) => new(p.X + q.X, p.Y + q.Y);
         public static Vec2 operator -(Vec2 p, Vec2 q) => new(p.X - q.X, p.Y - q.Y);
+
+        public override string ToString() => $"({X}, {Y})";
     }
 
     public override string PartOne(IEnumerable<string> input)
