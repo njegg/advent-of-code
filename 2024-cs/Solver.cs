@@ -15,6 +15,8 @@ public record Solver(string? AnswerOne = null, string? AnswerTwo = null)
         Func<IEnumerable<string>, string> solver,
         List<(string Expected, string Input)> examples
     ) {
+        Environment.SetEnvironmentVariable("example", "1");
+        
         foreach (var (expected, input) in examples)
         {
             var result = solver(input.Split("\n"));

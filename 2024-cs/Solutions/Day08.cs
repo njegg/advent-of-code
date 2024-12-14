@@ -6,10 +6,21 @@ namespace _2024_cs.Solutions;
 
 public record Day08() : Solver(AnswerOne: "400", AnswerTwo: "1280")
 {
-    public record struct Vec2(int X, int Y)
+    public record struct Vec2
     {
+        public Vec2(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
+        
+        public int X;
+        public int Y;
         public static Vec2 operator +(Vec2 p, Vec2 q) => new(p.X + q.X, p.Y + q.Y);
         public static Vec2 operator -(Vec2 p, Vec2 q) => new(p.X - q.X, p.Y - q.Y);
+        public static Vec2 operator *(Vec2 p, int d) => new(p.X * d, p.Y * d);
+        public static Vec2 operator *(Vec2 p, float d) => new((int)(p.X * d), (int)(p.Y * d));
+        public int DistSquared(Vec2 q) => (X - q.X) * (X - q.X) + (Y - q.Y) * (Y - q.Y);
 
         public override string ToString() => $"({X}, {Y})";
     }
