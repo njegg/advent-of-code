@@ -22,6 +22,12 @@ public record Day08() : Solver(AnswerOne: "400", AnswerTwo: "1280")
         public static Vec2 operator *(Vec2 p, float d) => new((int)(p.X * d), (int)(p.Y * d));
         public int DistSquared(Vec2 q) => (X - q.X) * (X - q.X) + (Y - q.Y) * (Y - q.Y);
 
+        public void Deconstruct(out int x, out int y)
+        {
+            x = X;
+            y = Y;
+        }
+
         public override string ToString() => $"({X}, {Y})";
     }
 

@@ -5,10 +5,11 @@ namespace _2024_cs;
 
 internal static class Program
 {
-    private static double TotalTime = 0;
+    private static double _totalTime;
     
     public static void Main(string[] args)
     {
+        Console.CancelKeyPress += (_, _) => Console.CursorVisible = true;
         Console.WriteLine(Tree);
         
         Parser.Default.ParseArguments<Options>(args)
@@ -33,6 +34,8 @@ internal static class Program
                     default: Solve(o.IsSingle(true)); break;
                 }
             });
+        
+        Console.CursorVisible = true;
     }
 
     private static void TrySetToday(ref Options o)
@@ -61,7 +64,7 @@ internal static class Program
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("--------- Total Time ----------");
-            var time = $"{TotalTime:F3}";
+            var time = $"{_totalTime:F3}";
             Console.WriteLine($"{time,26} ms");
         }
     }
@@ -102,7 +105,7 @@ internal static class Program
             .FromTicks(stopwatch.ElapsedTicks / 100)
             .Ticks * 1d / TimeSpan.TicksPerMillisecond;
 
-        TotalTime += timeInMs;
+        _totalTime += timeInMs;
         
         var isCorrect = answer == result;
 

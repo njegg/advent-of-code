@@ -162,6 +162,12 @@ public static partial class Extension
         Direction.Down => 1,
         _ => 0
     };
+
+    public static void Deconstruct(this Direction dir, out int x, out int y)
+    {
+        x = dir.X();
+        y = dir.Y();
+    }
     
     public static Direction RotateClockwise(this Direction dir)
     {

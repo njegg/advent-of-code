@@ -12,7 +12,7 @@ namespace _2024_cs.Solutions;
 ///             slowed down 600 times
 ///     =sim2 - same as sim1 but continue the sim after the tree
 ///     =xxx  - just print the tree to admire it
-/// 
+///  
 public record Day14() : Solver(AnswerOne: "214109808", AnswerTwo: "7687")
 {
     private const int Time = 100;
