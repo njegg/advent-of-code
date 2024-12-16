@@ -1,3 +1,4 @@
+using System.Data;
 using _2024_cs.Extension;
 
 namespace _2024_cs.Solutions;
@@ -155,6 +156,8 @@ public static partial class Extension
         Direction.Left => -1,
         _ => 0
     };
+    
+    public static bool IsVertical(this Direction dir) => dir is Direction.Up or Direction.Down;
     
     public static int Y(this Direction dir) => dir switch
     {
