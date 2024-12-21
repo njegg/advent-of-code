@@ -10,7 +10,9 @@ public record Solver(string? AnswerOne = null, string? AnswerTwo = null)
 
     public void TestPartOne() => Test(PartOne, PartOneExamples);
     public void TestPartTwo() => Test(PartTwo, PartTwoExamples);
-
+    
+    protected bool IsExample() => Environment.GetEnvironmentVariable("example") is not null;
+    
     private static void Test(
         Func<IEnumerable<string>, string> solver,
         List<(string Expected, string Input)> examples

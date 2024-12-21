@@ -47,6 +47,7 @@ public record Day16() : Solver(AnswerOne: "114476", AnswerTwo: "508")
         
         if (
             map[y][x] == '#' ||
+            currentCost >= bestPath.Cost ||
             visited[y][x] < currentCost
         ) return;
 
