@@ -122,11 +122,11 @@ internal static class Program
                 : ConsoleColor.Red;
         }
         
-        Console.Write($"{result,-16}");
+        Console.Write($"{result,-17}");
         
         Console.ForegroundColor = ConsoleColor.DarkGray;
         var displayTime = $"{timeInMs:F3} ms";
-        if (!o.TimeOff) Console.Write($"{displayTime,13}");
+        if (!o.TimeOff) Console.Write($"{displayTime,12}");
         
         if (isCorrect && !o.TimeOff) Console.Write($" {Y}*");
         
