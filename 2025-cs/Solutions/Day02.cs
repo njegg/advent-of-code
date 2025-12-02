@@ -1,8 +1,6 @@
 namespace _2024_cs.Solutions;
 
-
 // --- Day 2: Gift Shop --- //
-
 
 public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137")
 {
@@ -10,52 +8,25 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
     {
         var result = 0UL;
 
-        input.First()
+        var ranges = input.First()
             .Split(",")
-            .ToList()
-            .ForEach(s =>
+            .ToList();
+        
+        Parallel.ForEach(ranges, s =>
             {
                 var range = s.Split("-").Select(ulong.Parse).ToArray();
-
+                518055         56.296 ms *
+                    53481866137        143.149 ms *
                 for (var x = range[0]; x <= range[1]; x++)
                 {
                     var id = x.ToString();
                     if (id.Length % 2 != 0) continue;
-
+                    
                     var mid = id.Length / 2;
 
-                    if (id[..mid] == id[mid..]) result += x;
-                }
-            });
-
-
-        return result.ToString();
-    }
-    
-    public override string PartTwo(IEnumerable<string> input)
-    {
-        var result = 0UL;
-
-        input.First()
-            .Split(",")
-            .ToList()
-            .ForEach(s =>
-            {
-                var range = s.Split("-").Select(ulong.Parse).ToArray();
-
-                for (var x = range[0]; x <= range[1]; x++)
-                {
-                    var id = x.ToString();
-                    var mid = id.Length / 2;
-
-                    // Find any sequence len that is repeated
-                    for (var seqLen = 1; seqLen <= mid; seqLen++)
+                    if (HasRepeatingSequence(id, mid))
                     {
-                        if (Repeats(id, seqLen))
-                        {
-                            result += x;
-                            break;
-                        }
+                        Interlocked.Add(ref result, x);
                     }
                 }
             });
@@ -64,8 +35,39 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
         return result.ToString();
     }
 
-    public static bool Repeats(string s, int len)
+    public override string PartTwo(IEnumerable<string> input)
     {
+        var result = 0UL;
+
+        var ranges = input.First()
+            .Split(",")
+            .Select(s => s.Split("-").Select(ulong.Parse).ToArray())
+            .ToList();
+            
+        Parallel.ForEach(ranges, range =>
+        {
+            for (var x = range[0]; x <= range[1]; x++)
+            {
+                var id = x.ToString();
+                var mid = id.Length / 2;
+
+                for (var seqLen = 1; seqLen <= mid; seqLen++)
+                {
+                    if (HasRepeatingSequence(id, seqLen))
+                    {
+                        Interlocked.Add(ref result, x);
+                        break;
+                    }
+                }
+            }
+        });
+
+        return result.ToString();
+    }
+    
+    private static bool HasRepeatingSequence(string s, int len)
+    {
+        if (len == 0) return false;
         if (s.Length % len != 0) return false;
 
         var seq = s[..len];
@@ -81,6 +83,38 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
         // All blocks same
         return true;
     }
+    
+    // This one is slower :(
+    [Obsolete]
+    private static bool Block(ulong number, int n)
+    {
+        var digitCount = 1 + (int) Math.Floor(Math.Log10(number));
+
+        if (digitCount % n != 0) return false;
+
+        var blockCount = digitCount / n;
+        var nPow10 = (int)Math.Floor(Math.Pow(10, n));
+        
+        if (blockCount == 0) return false;
+
+        double current = number;
+        var targetSequence = (int)Math.Floor(current % nPow10);
+
+        for (var i = 0; i < blockCount; i++)
+        {
+            var lastNDigits = (int)Math.Floor(current % nPow10);
+
+            if (lastNDigits != targetSequence)
+            {
+                return false;
+            }
+            
+            current /= nPow10; // shift right by N digits
+        }
+        
+        return true;
+    }
+    
     
     protected override List<(string Expected, string Input)> PartOneExamples => [
         (
