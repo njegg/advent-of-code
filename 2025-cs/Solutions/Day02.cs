@@ -15,8 +15,7 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
         Parallel.ForEach(ranges, s =>
             {
                 var range = s.Split("-").Select(ulong.Parse).ToArray();
-                518055         56.296 ms *
-                    53481866137        143.149 ms *
+
                 for (var x = range[0]; x <= range[1]; x++)
                 {
                     var id = x.ToString();
