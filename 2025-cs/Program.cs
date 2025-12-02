@@ -101,9 +101,7 @@ internal static class Program
         var result = partSolver(input);
         stopwatch.Stop();
 
-        var timeInMs = TimeSpan
-            .FromTicks(stopwatch.ElapsedTicks / 100)
-            .Ticks * 1d / TimeSpan.TicksPerMillisecond;
+        var timeInMs = stopwatch.Elapsed.TotalMilliseconds;
 
         _totalTime += timeInMs;
         
@@ -178,7 +176,7 @@ internal static class Program
         """;
 }
 
-class Options
+internal class Options
 {
     [Option(shortName: 'd', Required = false, HelpText = "Day")]
     public int Day { get; set; }

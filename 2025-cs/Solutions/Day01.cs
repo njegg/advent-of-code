@@ -25,82 +25,46 @@ public record Day01() : Solver(AnswerOne: "1150", AnswerTwo: "6738")
     public override string PartTwo(IEnumerable<string> input)
     {
         var result = 0;
-        var current = 50;
-
-        input
-            .Select(l => int.Parse(l[1..]) * (l[0] == 'R' ? 1 : -1))
-            .ToList()
-            .ForEach(x =>
-            {
-                var sign = x > 0 ? 1 : -1;
-                
-                for (var i = 0; i < Math.Abs(x); i++)
-                {
-                    current += sign;
-
-                    current = current switch
-                    {
-                        -1 => 99,
-                        100 => 0,
-                        _ => current
-                    };
-                    
-                    if (current == 0) result++;
-                }
-            });
-
-        return result.ToString();
-    }
- 
-    
-    // 5360 - TOO LOW
-    // 6605 - NOT IT
-    // 6146 - NOT IT
-    // 6266 - NOT IT
-    // 6734 - NOT IT
-    // 6634 - NOT IT
-    // 7744 - TOO HIGH
-    // AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-    public string PartTwo2(IEnumerable<string> input)
-    {
-        var result = 0;
 
         _ = input
             .Select(l => int.Parse(l[1..]) * (l[0] == 'R' ? 1 : -1))
-            .Aggregate(50, (current, x) =>
+            .Aggregate(50, (current, step) =>
             {
                 if (current < 0) throw new Exception("current is " + current);
                 
-                var next = Mod(current + x, 100);
-                
-                var diffToZero = x > 0 ? 100 - current : -current;
+                var next = Mod(current + step, 100);
 
-                if (Math.Abs(x) < Math.Abs(diffToZero))
+                var diffToZero = (current, step) switch
                 {
-                    // nothing
-                } 
-                else if (Math.Abs(x) == Math.Abs(diffToZero))
+                    (current: _, step: 0) => throw new ArgumentOutOfRangeException(nameof(step), step, "Step cannot be 0"),
+
+                    (current: 0, step: > 0) => 100,
+                    (current: 0, step: < 0) => -100,
+
+                    (current: _, step: > 0) => 100 - current,
+                    (current: _, step: < 0) => -current
+                };
+
+                var stepAbs = Math.Abs(step);
+                var diffToZeroAbs = Math.Abs(diffToZero);
+
+                if (stepAbs == diffToZeroAbs)
                 {
                     result++;
                 }
-                else if (Math.Abs(x) > Math.Abs(diffToZero))
+                else if (stepAbs > diffToZeroAbs)
                 {
-                    // Oveerflow
-
-                    if (Math.Abs(x) - Math.Abs(diffToZero) >= 100)
+                    if (stepAbs > 100)
                     {
-                        var add = (next == 0 ? 0 : 1) + (Math.Abs(x) - Math.Abs(diffToZero)) / 100;
-                        // var add = Math.Abs(x) / 100;
-                        // help
-                        result += add;
-
-                        _ = add;
+                        var stepsLeftAfterReachingZero = stepAbs - diffToZeroAbs;
+                        var loopCount = stepsLeftAfterReachingZero / 100 + 1;
+                        
+                        result += loopCount;
                     }
                     else if (current != 0)
                     {
                         result++;
                     }
-                    
                 }
 
                 return next;
