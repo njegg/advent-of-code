@@ -21,7 +21,7 @@ public record Solver(string? AnswerOne = null, string? AnswerTwo = null)
         
         foreach (var (expected, input) in examples)
         {
-            var result = solver(input.Split("\n"));
+            var result = solver(input.Split(Environment.NewLine));
             var isCorrect = result == expected;
 
             Console.ForegroundColor = isCorrect

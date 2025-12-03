@@ -29,6 +29,25 @@ public static class Extensions
                 yield return item;
     }
     
+    public static (T Max, int Index) Max<T>(this T[] sequence) where T : IComparable
+    {
+        if (sequence.Length == 0) throw new ArgumentException("Sequence contains no elements");
+
+        T? max = default;
+        var index = -1;
+        
+        for (var i = 0; i < sequence.Length; i++)
+        {
+            if (sequence[i].CompareTo(max) > 0)
+            {
+                max = sequence[i];
+                index = i;
+            }
+        }
+
+        return (max!, index);
+    }
+    
     public static IEnumerable<(T e, int i)> WithIndex<T>(this IEnumerable<T> source)
     {
         return source.Select((item, index) => (item, index));
