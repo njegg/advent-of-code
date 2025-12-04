@@ -12,6 +12,7 @@ public record Solver(string? AnswerOne = null, string? AnswerTwo = null)
     public void TestPartTwo() => Test(PartTwo, PartTwoExamples);
     
     protected bool IsExample() => Environment.GetEnvironmentVariable("example") is not null;
+    public bool Simulate { get; set; }
     
     private static void Test(
         Func<IEnumerable<string>, string> solver,
@@ -39,6 +40,25 @@ public record Solver(string? AnswerOne = null, string? AnswerTwo = null)
             Console.WriteLine();
             Console.ResetColor();
         }
+    }
+    
+    protected void ClearScreen()
+    {
+        // var width = Console.WindowWidth;
+        //
+        // var emptyRow = new string(' ', width);
+        //
+        // for (int y = 0; y < Console.WindowHeight; y++)
+        // {
+        //     Console.SetCursorPosition(0, y);
+        //     Console.Write(emptyRow);
+        // }
+        //
+        // Console.SetCursorPosition(0, 0);
+        
+        
+        Console.Write("\x1b[2J");   // clear screen
+        Console.Write("\x1b[H");    // move cursor to 0,0
     }
 }
 

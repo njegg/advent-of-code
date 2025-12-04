@@ -144,9 +144,12 @@ internal static class Program
             return new EmptySolver();
         }
         
-        var solver = Activator.CreateInstance(type) ?? throw new IOException($"Could not create instance {solutionName}");
+        var instance = Activator.CreateInstance(type) ?? throw new IOException($"Could not create instance {solutionName}");
 
-        return (Solver)solver;
+        var solver = (Solver)instance;
+        solver.Simulate = o.Simulate;
+        
+        return solver;
     }
 
     private static void Panic(string message)
@@ -190,8 +193,11 @@ internal class Options
     [Option(shortName: 'a', Required = false, HelpText = "Run 'em all")]
     public bool All { get; set; }
 
-    [Option(shortName: 'e', Required = false, HelpText = "Use example input")]
+    [Option(shortName: 'e', Required = false, HelpText = "Use example input (Or real one if working on today's day)")]
     public bool Example { get; set; }
+    
+    [Option(shortName: 's', Required = false, HelpText = "Simulate")]
+    public bool Simulate { get; set; }
 
     public bool Single { get; set; }
     

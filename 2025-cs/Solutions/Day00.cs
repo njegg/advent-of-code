@@ -28,9 +28,7 @@ public record Day00() : Solver(AnswerOne: null, AnswerTwo: null)
     protected override List<(string Expected, string Input)> PartTwoExamples => [
         (
             Expected: "",
-            Input: """
-            
-            """
+            Input: PartOneExamples[0].Input
         ),
     ];
 }
