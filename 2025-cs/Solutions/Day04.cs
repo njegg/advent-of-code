@@ -73,7 +73,7 @@ public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
 
             if (Simulate)
             {
-                Thread.Sleep(IsExample() ? 300 : 66);
+                Thread.Sleep(IsExample() ? 300 : 50);
                 ClearScreen();
                 PrintMap(paperMap);
             }
@@ -124,11 +124,10 @@ public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
         return x >= map[0].Length || x < 0 || y >= map.Length || y < 0;
     }
 
+    private static StringBuilder sb = new StringBuilder(4000);
     private static void PrintMap(char[][] map)
     {
-        var sb = new StringBuilder(map[0].Length);
-        
-        var prettierMap = map.Select(r =>
+        foreach (var r in map)
         {
             foreach (var c in r)
             {
@@ -136,15 +135,11 @@ public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
                 sb.Append(c);
             }
 
-            var res = sb.ToString().ToCharArray();
-            sb.Clear();
-            return res;
-        }).ToArray();
-        
-        foreach (var row in prettierMap)
-        {
-            Console.WriteLine(row);
+            sb.Append('\n');
         }
+
+        Console.WriteLine(sb.ToString());
+        sb.Clear();
     }
     
     

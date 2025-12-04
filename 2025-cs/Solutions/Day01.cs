@@ -1,4 +1,6 @@
-namespace _2024_cs.Solutions;
+using _2024_cs;
+
+namespace _2025_cs.Solutions;
 
 
 // --- Day 1: Secret Entrance --- //
@@ -84,6 +86,8 @@ public record Day01() : Solver(AnswerOne: "1150", AnswerTwo: "6738")
             : res;
     }
     
+    
+    // --- Example Inputs --- ///
 
 
     protected override List<(string Expected, string Input)> PartOneExamples => [

@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
+using _2024_cs;
 using CommandLine;
+using static _2025_cs.Colors;
 
-namespace _2024_cs;
+namespace _2025_cs;
 
 internal static class Program
 {
@@ -134,7 +136,7 @@ internal static class Program
     
     private static Solver GetSolverInstance(Options o)
     {
-        var solutionName = $"{nameof(_2024_cs)}.{nameof(Solutions)}.Day{o.Day:00}";
+        var solutionName = $"{nameof(_2024_cs)}.{nameof(_2024_cs.Solutions)}.Day{o.Day:00}";
 
         var type = Type.GetType(solutionName);
         if (type == null)
@@ -159,13 +161,6 @@ internal static class Program
         Environment.Exit(1);
     }
     
-    private const string G = "\u001b[32m";
-    private const string R = "\u001b[31m";
-    private const string B = "\u001b[34m";
-    private const string O = "\u001b[38;2;255;165;0m";
-    private const string Y = "\u001b[38;2;255;255;102m";
-    private const string X = "\u001b[0m";
-
     private const string Tree =
         $"""
         

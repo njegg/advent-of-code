@@ -1,6 +1,7 @@
+using _2024_cs;
 using _2024_cs.Extension;
 
-namespace _2024_cs.Solutions;
+namespace _2025_cs.Solutions;
 
 
 // --- Day 3: Lobby --- //
@@ -36,6 +37,9 @@ public record Day03() : Solver(AnswerOne: "17311", AnswerTwo: "171419245422055")
     }
     
 
+    // --- Example Inputs --- ///
+    
+    
     protected override List<(string Expected, string Input)> PartOneExamples => [
         (
             Expected: "357",

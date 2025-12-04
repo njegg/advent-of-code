@@ -1,4 +1,6 @@
-namespace _2024_cs.Solutions;
+using _2024_cs;
+
+namespace _2025_cs.Solutions;
 
 
 //  //
@@ -15,6 +17,10 @@ public record Day00() : Solver(AnswerOne: null, AnswerTwo: null)
     {
         return "";
     }
+    
+    
+    // --- Example Inputs --- ///
+    
 
     protected override List<(string Expected, string Input)> PartOneExamples => [
         (

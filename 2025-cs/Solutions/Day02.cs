@@ -1,4 +1,6 @@
-namespace _2024_cs.Solutions;
+using _2024_cs;
+
+namespace _2025_cs.Solutions;
 
 // --- Day 2: Gift Shop --- //
 
@@ -113,6 +115,9 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
         
         return true;
     }
+    
+    
+    // --- Example Inputs --- ///
     
     
     protected override List<(string Expected, string Input)> PartOneExamples => [
