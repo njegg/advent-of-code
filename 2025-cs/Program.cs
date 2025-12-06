@@ -10,12 +10,18 @@ internal static class Program
 
     public static void Main(string[] args)
     {
-        Console.CancelKeyPress += (_, _) => Console.CursorVisible = true;
-        Console.WriteLine(Tree);
-
         Parser.Default.ParseArguments<Options>(args)
             .WithParsed(o =>
             {
+                if (o is { DownlaodInput: true })
+                {
+                    DownlaodInput(o);
+                    return;
+                }
+
+                Console.CancelKeyPress += (_, _) => Console.CursorVisible = true;
+                Console.WriteLine(Tree);
+
                 if (o is { Day: 0, All: false }) TrySetToday(ref o);
 
                 switch (o)
@@ -154,10 +160,68 @@ internal static class Program
         return solver;
     }
 
+    private static void DownlaodInput(Options o)
+    {
+        if (string.IsNullOrWhiteSpace(o.Session))
+        {
+            Panic($"When downloading input you must pass the session for auth with --session arg");
+        }
+
+        if (o is { All: false, Day: <= 0 or > 25 })
+        {
+            Panic($"{o.Day} is not a valid day!");
+        }
+
+        var handler = new HttpClientHandler { UseCookies = false };
+        using var client = new HttpClient(handler);
+
+        var daysToDownload = DateTime.Now switch
+        {
+            { Year: > 2025 } or { Year: 2025, Month: 12, Day: >= 12 } => 25,
+            { Year: 2025, Month: 12, Day: var day } when day <= 12 => day,
+            _ => 0
+        };
+
+        if (daysToDownload == 0)
+        {
+            Console.WriteLine("No days to download yet");
+            return;
+        }
+
+
+        Enumerable
+            .Range(o.All ? 1 : o.Day, o.All ? daysToDownload : 1)
+            .ToList()
+            .ForEach(day =>
+            {
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.Write($"Downloading input for day {day} ...");
+
+                var req = new HttpRequestMessage(HttpMethod.Get, $"https://adventofcode.com/2025/day/{day}/input");
+                req.Headers.Add("cookie", $"session={o.Session}");
+
+                var res = client.Send(req);
+                var text = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+                if (res.StatusCode is not System.Net.HttpStatusCode.OK)
+                {
+                    Panic($"Status {res.StatusCode}: {text}");
+                    return;
+                }
+
+                Directory.CreateDirectory("Input");
+
+                File.WriteAllText(Path.Combine("Input", $"input{day:D2}"), text);
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(" Done!");
+            });
+    }
+
     private static void Panic(string message)
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine(message);
+        Console.Error.WriteLine(message);
         Environment.Exit(1);
     }
 
@@ -193,6 +257,12 @@ internal class Options
 
     [Option(shortName: 's', Required = false, HelpText = "Simulate")]
     public bool Simulate { get; set; }
+
+    [Option(shortName: 'i', Required = false, HelpText = "Download Input")]
+    public bool DownlaodInput { get; set; }
+
+    [Option(longName: "session", Required = false, HelpText = "Session for Auth when downloading input")]
+    public string Session { get; set; } = string.Empty;
 
     public bool Single { get; set; }
 
