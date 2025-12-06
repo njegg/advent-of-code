@@ -1,7 +1,7 @@
 using System.Drawing;
 using System.Text;
 
-namespace _2024_cs.Solutions;
+namespace _2025_cs.Solutions;
 
 
 // --- Day 4: Printing Department --- //
@@ -9,15 +9,15 @@ namespace _2024_cs.Solutions;
 
 public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
 {
-    private static readonly int[] XNeighbours = [0, 1, 1, 1, 0, -1, -1, -1]; 
-    private static readonly int[] YNeighbours = [-1, -1, 0, 1, 1, 1, 0, -1];    
-    
+    private static readonly int[] XNeighbours = [0, 1, 1, 1, 0, -1, -1, -1];
+    private static readonly int[] YNeighbours = [-1, -1, 0, 1, 1, 1, 0, -1];
+
     public override string PartOne(IEnumerable<string> input)
     {
         var paperMap = input.Select(l => l.ToCharArray()).ToArray();
 
         var movablePaperCount = 0;
-        
+
         var (width, height) = (paperMap[0].Length, paperMap.Length);
 
         for (var y = 0; y < height; y++)
@@ -25,14 +25,14 @@ public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
             for (var x = 0; x < width; x++)
             {
                 if (paperMap[y][x] != '@') continue;
-                
+
                 var paperCount = 0;
-                
+
                 for (var di = 0; di < 8; di++)
                 {
                     var nx = x + XNeighbours[di];
                     var ny = y + YNeighbours[di];
-                    
+
                     if (OutOfBounds(paperMap, nx, ny)) continue;
                     if (paperMap[ny][nx] != '.') paperCount++;
                 }
@@ -53,7 +53,7 @@ public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
 
         return movablePaperCount.ToString();
     }
-    
+
     public override string PartTwo(IEnumerable<string> input)
     {
         var paperMap = input.Select(l => l.ToCharArray()).ToArray();
@@ -94,14 +94,14 @@ public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
             for (var x = 0; x < width; x++)
             {
                 if (paperMap[y][x] != '@') continue;
-                
+
                 var adjacentPapers = 0;
-                
+
                 for (var di = 0; di < 8; di++)
                 {
                     var nx = x + XNeighbours[di];
                     var ny = y + YNeighbours[di];
-                    
+
                     if (OutOfBounds(paperMap, nx, ny)) continue;
                     if (paperMap[ny][nx] != '.') adjacentPapers++;
                 }
@@ -114,7 +114,7 @@ public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
         }
 
         removablePapers.ForEach(p => paperMap[p.Y][p.X] = '.');
-        
+
         removedCount = removablePapers.Count;
         return removedCount > 0;
     }
@@ -141,8 +141,8 @@ public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
         Console.WriteLine(sb.ToString());
         sb.Clear();
     }
-    
-    
+
+
     // --- Example Inputs --- ///
 
     protected override List<(string Expected, string Input)> PartOneExamples => [

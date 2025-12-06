@@ -1,25 +1,26 @@
-namespace _2024_cs;
+namespace _2025_cs;
 
 public record Solver(string? AnswerOne = null, string? AnswerTwo = null)
 {
     protected virtual List<(string Expected, string Input)> PartOneExamples => [];
     protected virtual List<(string Expected, string Input)> PartTwoExamples => [];
-    
+
     public virtual string PartOne(IEnumerable<string> input) => "-";
     public virtual string PartTwo(IEnumerable<string> input) => "-";
 
     public void TestPartOne() => Test(PartOne, PartOneExamples);
     public void TestPartTwo() => Test(PartTwo, PartTwoExamples);
-    
+
     protected bool IsExample() => Environment.GetEnvironmentVariable("example") is not null;
     public bool Simulate { get; set; }
-    
+
     private static void Test(
         Func<IEnumerable<string>, string> solver,
         List<(string Expected, string Input)> examples
-    ) {
+    )
+    {
         Environment.SetEnvironmentVariable("example", "1");
-        
+
         foreach (var (expected, input) in examples)
         {
             var result = solver(input.Split(Environment.NewLine));
@@ -41,7 +42,7 @@ public record Solver(string? AnswerOne = null, string? AnswerTwo = null)
             Console.ResetColor();
         }
     }
-    
+
     protected void ClearScreen()
     {
         Console.Write("\x1b[2J");   // clear screen

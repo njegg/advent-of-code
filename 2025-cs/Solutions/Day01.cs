@@ -1,5 +1,3 @@
-using _2024_cs;
-
 namespace _2025_cs.Solutions;
 
 
@@ -23,7 +21,7 @@ public record Day01() : Solver(AnswerOne: "1150", AnswerTwo: "6738")
 
         return result.ToString();
     }
-    
+
     public override string PartTwo(IEnumerable<string> input)
     {
         var result = 0;
@@ -33,7 +31,7 @@ public record Day01() : Solver(AnswerOne: "1150", AnswerTwo: "6738")
             .Aggregate(50, (current, step) =>
             {
                 if (current < 0) throw new Exception("current is " + current);
-                
+
                 var next = Mod(current + step, 100);
 
                 var diffToZero = (current, step) switch
@@ -60,7 +58,7 @@ public record Day01() : Solver(AnswerOne: "1150", AnswerTwo: "6738")
                     {
                         var stepsLeftAfterReachingZero = stepAbs - diffToZeroAbs;
                         var loopCount = stepsLeftAfterReachingZero / 100 + 1;
-                        
+
                         result += loopCount;
                     }
                     else if (current != 0)
@@ -80,13 +78,13 @@ public record Day01() : Solver(AnswerOne: "1150", AnswerTwo: "6738")
         // return x - m * (int)Math.Floor(1.0F * x / m);
 
         var res = x % m;
-        
-        return res < 0 
-            ? m + res 
+
+        return res < 0
+            ? m + res
             : res;
     }
-    
-    
+
+
     // --- Example Inputs --- ///
 
 

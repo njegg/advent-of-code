@@ -1,5 +1,3 @@
-using _2024_cs;
-
 namespace _2025_cs.Solutions;
 
 // --- Day 2: Gift Shop --- //
@@ -13,7 +11,7 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
         var ranges = input.First()
             .Split(",")
             .ToList();
-        
+
         Parallel.ForEach(ranges, s =>
             {
                 var range = s.Split("-").Select(ulong.Parse).ToArray();
@@ -22,7 +20,7 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
                 {
                     var id = x.ToString();
                     if (id.Length % 2 != 0) continue;
-                    
+
                     var mid = id.Length / 2;
 
                     if (HasRepeatingSequence(id, mid))
@@ -44,7 +42,7 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
             .Split(",")
             .Select(s => s.Split("-").Select(ulong.Parse).ToArray())
             .ToList();
-            
+
         Parallel.ForEach(ranges, range =>
         {
             for (var x = range[0]; x <= range[1]; x++)
@@ -65,14 +63,14 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
 
         return result.ToString();
     }
-    
+
     private static bool HasRepeatingSequence(string s, int len)
     {
         if (len == 0) return false;
         if (s.Length % len != 0) return false;
 
         var seq = s[..len];
-        
+
         // Check each len sized block
         for (var blockStart = len; blockStart <= s.Length - len; blockStart += len)
         {
@@ -84,18 +82,18 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
         // All blocks same
         return true;
     }
-    
+
     // This one is slower :(
     [Obsolete]
     private static bool Block(ulong number, int n)
     {
-        var digitCount = 1 + (int) Math.Floor(Math.Log10(number));
+        var digitCount = 1 + (int)Math.Floor(Math.Log10(number));
 
         if (digitCount % n != 0) return false;
 
         var blockCount = digitCount / n;
         var nPow10 = (int)Math.Floor(Math.Pow(10, n));
-        
+
         if (blockCount == 0) return false;
 
         double current = number;
@@ -109,17 +107,17 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
             {
                 return false;
             }
-            
+
             current /= nPow10; // shift right by N digits
         }
-        
+
         return true;
     }
-    
-    
+
+
     // --- Example Inputs --- ///
-    
-    
+
+
     protected override List<(string Expected, string Input)> PartOneExamples => [
         (
             Expected: "1227775554",

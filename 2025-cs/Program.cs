@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using _2024_cs;
 using CommandLine;
 using static _2025_cs.Colors;
 
@@ -8,35 +7,35 @@ namespace _2025_cs;
 internal static class Program
 {
     private static double _totalTime;
-    
+
     public static void Main(string[] args)
     {
         Console.CancelKeyPress += (_, _) => Console.CursorVisible = true;
         Console.WriteLine(Tree);
-        
+
         Parser.Default.ParseArguments<Options>(args)
             .WithParsed(o =>
             {
                 if (o is { Day: 0, All: false }) TrySetToday(ref o);
-                
+
                 switch (o)
                 {
                     case { Day: 0 } or { All: true }: SolveAllDays(o); break;
-                    
+
                     case { Day: < 0 or > 25 }: Panic("There is only 25 days :("); break;
                     case { Part: < 0 or > 2 }: Panic("There is only 2 parts ):"); break;
-                    
+
                     case { Example: true }: SolveOnExamples(o); break;
-                        
+
                     case { Part: 0 }:
                         Solve(o.WithPart(1));
                         Solve(o.WithPart(2));
                         break;
-                    
+
                     default: Solve(o.IsSingle(true)); break;
                 }
             });
-        
+
         Console.CursorVisible = true;
     }
 
@@ -83,20 +82,21 @@ internal static class Program
         var inputPath = $"Input/input{o.Day:00}";
 
         if (!File.Exists(inputPath)) Panic($"File {inputPath} not found");
-        
+
         return File.ReadLines(inputPath).ToList();
     }
 
-    private static void Solve(Options o) {
+    private static void Solve(Options o)
+    {
         var solver = GetSolverInstance(o);
 
         if (solver is EmptySolver) return;
-        
+
         var input = ReadInput(o);
         var answer = o.Part == 1 ? solver.AnswerOne : solver.AnswerTwo;
-        
-        Func<List<string>, string> partSolver = o.Part == 1 
-            ? solver.PartOne 
+
+        Func<List<string>, string> partSolver = o.Part == 1
+            ? solver.PartOne
             : solver.PartTwo;
 
         var stopwatch = Stopwatch.StartNew();
@@ -106,7 +106,7 @@ internal static class Program
         var timeInMs = stopwatch.Elapsed.TotalMilliseconds;
 
         _totalTime += timeInMs;
-        
+
         var isCorrect = answer == result;
 
         if (o is { Part: 1 } or { Part: 2, Single: true })
@@ -114,43 +114,43 @@ internal static class Program
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine($"----------- Day {o.Day:00} ------------");
         }
-        
+
         if (answer != null) // No color if answer is unknown
         {
-            Console.ForegroundColor = isCorrect 
+            Console.ForegroundColor = isCorrect
                 ? ConsoleColor.Green
                 : ConsoleColor.Red;
         }
-        
+
         Console.Write($"{result,-17}");
-        
+
         Console.ForegroundColor = ConsoleColor.DarkGray;
         var displayTime = $"{timeInMs:F3} ms";
         if (!o.TimeOff) Console.Write($"{displayTime,12}");
-        
+
         if (isCorrect && !o.TimeOff) Console.Write($" {Y}*");
-        
+
         Console.ResetColor();
         Console.WriteLine();
     }
-    
+
     private static Solver GetSolverInstance(Options o)
     {
-        var solutionName = $"{nameof(_2024_cs)}.{nameof(_2024_cs.Solutions)}.Day{o.Day:00}";
+        var solutionName = $"{nameof(_2025_cs)}.{nameof(_2025_cs.Solutions)}.Day{o.Day:00}";
 
         var type = Type.GetType(solutionName);
         if (type == null)
         {
             if (o.Single || o.Example) Panic($"Could not read {solutionName}");
-            
+
             return new EmptySolver();
         }
-        
+
         var instance = Activator.CreateInstance(type) ?? throw new IOException($"Could not create instance {solutionName}");
 
         var solver = (Solver)instance;
         solver.Simulate = o.Simulate;
-        
+
         return solver;
     }
 
@@ -160,7 +160,7 @@ internal static class Program
         Console.WriteLine(message);
         Environment.Exit(1);
     }
-    
+
     private const string Tree =
         $"""
         
@@ -184,19 +184,19 @@ internal class Options
 
     [Option(shortName: 't', Required = false, HelpText = "Time it! Will invert when running for all cases")]
     public bool TimeOff { get; set; }
-    
+
     [Option(shortName: 'a', Required = false, HelpText = "Run 'em all")]
     public bool All { get; set; }
 
     [Option(shortName: 'e', Required = false, HelpText = "Use example input (Or real one if working on today's day)")]
     public bool Example { get; set; }
-    
+
     [Option(shortName: 's', Required = false, HelpText = "Simulate")]
     public bool Simulate { get; set; }
 
     public bool Single { get; set; }
-    
-    public Options WithDay(int day) { Day = day; return this; } 
+
+    public Options WithDay(int day) { Day = day; return this; }
     public Options WithPart(int part) { Part = part; return this; }
     public Options IsSingle(bool single) { Single = single; return this; }
     public Options WithTimeOff(bool time) { TimeOff = time; return this; }

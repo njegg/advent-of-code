@@ -1,5 +1,4 @@
-using _2024_cs;
-using _2024_cs.Extension;
+using _2025_cs.Extension;
 
 namespace _2025_cs.Solutions;
 
@@ -12,12 +11,12 @@ public record Day03() : Solver(AnswerOne: "17311", AnswerTwo: "171419245422055")
     private static string FindBestBatteries(char[] line, int len)
     {
         if (len == 0) return "";
-        
+
         var (max, maxIndex) = line[..^(len - 1)].Max();
 
         return max + FindBestBatteries(line[(maxIndex + 1)..], len - 1);
     }
-    
+
     public override string PartOne(IEnumerable<string> input)
     {
         return input
@@ -35,11 +34,11 @@ public record Day03() : Solver(AnswerOne: "17311", AnswerTwo: "171419245422055")
             .Sum()
             .ToString();
     }
-    
+
 
     // --- Example Inputs --- ///
-    
-    
+
+
     protected override List<(string Expected, string Input)> PartOneExamples => [
         (
             Expected: "357",
