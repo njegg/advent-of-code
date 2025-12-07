@@ -28,7 +28,7 @@ public record Day06() : Solver(AnswerOne: "5322004718681", AnswerTwo: "987663697
      * rest is ez
      *
      */
-    public override string PartOne(IEnumerable<string> input)
+    public override Solution PartOne(IEnumerable<string> input)
     {
         return input
             .Select(l => l.Split(" ", StringSplitOptions.RemoveEmptyEntries))
@@ -61,7 +61,7 @@ public record Day06() : Solver(AnswerOne: "5322004718681", AnswerTwo: "987663697
      * rest is ez
      *
      */
-    public override string PartTwo(IEnumerable<string> input)
+    public override Solution PartTwo(IEnumerable<string> input)
     {
         return input
             .Select(l => l.ToCharArray())

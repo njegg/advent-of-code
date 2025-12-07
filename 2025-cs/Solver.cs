@@ -5,8 +5,8 @@ public record Solver(string? AnswerOne = null, string? AnswerTwo = null)
     protected virtual List<(string Expected, string Input)> PartOneExamples => [];
     protected virtual List<(string Expected, string Input)> PartTwoExamples => [];
 
-    public virtual string PartOne(IEnumerable<string> input) => "-";
-    public virtual string PartTwo(IEnumerable<string> input) => "-";
+    public virtual Solution PartOne(IEnumerable<string> input) => "-";
+    public virtual Solution PartTwo(IEnumerable<string> input) => "-";
 
     public void TestPartOne() => Test(PartOne, PartOneExamples);
     public void TestPartTwo() => Test(PartTwo, PartTwoExamples);
@@ -15,7 +15,7 @@ public record Solver(string? AnswerOne = null, string? AnswerTwo = null)
     public bool Simulate { get; set; }
 
     private static void Test(
-        Func<IEnumerable<string>, string> solver,
+        Func<IEnumerable<string>, Solution> solver,
         List<(string Expected, string Input)> examples
     )
     {
@@ -51,3 +51,16 @@ public record Solver(string? AnswerOne = null, string? AnswerTwo = null)
 }
 
 public record EmptySolver : Solver;
+
+public record Solution(string Value)
+{
+    public static implicit operator Solution(string s) => new(s);
+    public static implicit operator Solution(int i) => new(i.ToString());
+    public static implicit operator Solution(long i) => new(i.ToString());
+    public static implicit operator Solution(uint i) => new(i.ToString());
+    public static implicit operator Solution(ulong i) => new(i.ToString());
+
+    public static implicit operator string(Solution s) => s.Value;
+
+    public override string ToString() => Value;
+}

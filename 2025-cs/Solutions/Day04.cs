@@ -12,7 +12,7 @@ public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
     private static readonly int[] XNeighbours = [0, 1, 1, 1, 0, -1, -1, -1];
     private static readonly int[] YNeighbours = [-1, -1, 0, 1, 1, 1, 0, -1];
 
-    public override string PartOne(IEnumerable<string> input)
+    public override Solution PartOne(IEnumerable<string> input)
     {
         var paperMap = input.Select(l => l.ToCharArray()).ToArray();
 
@@ -51,10 +51,10 @@ public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
         }
 
 
-        return movablePaperCount.ToString();
+        return movablePaperCount;
     }
 
-    public override string PartTwo(IEnumerable<string> input)
+    public override Solution PartTwo(IEnumerable<string> input)
     {
         var paperMap = input.Select(l => l.ToCharArray()).ToArray();
 
@@ -80,7 +80,7 @@ public record Day04() : Solver(AnswerOne: "1435", AnswerTwo: "8623")
         }
 
         Console.CursorVisible = true;
-        return totalRemoved.ToString();
+        return totalRemoved;
     }
 
     private static bool TryRemovePaper(char[][] paperMap, out int removedCount)

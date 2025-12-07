@@ -4,7 +4,7 @@ namespace _2025_cs.Solutions;
 
 public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137")
 {
-    public override string PartOne(IEnumerable<string> input)
+    public override Solution PartOne(IEnumerable<string> input)
     {
         var result = 0UL;
 
@@ -31,10 +31,10 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
             });
 
 
-        return result.ToString();
+        return result;
     }
 
-    public override string PartTwo(IEnumerable<string> input)
+    public override Solution PartTwo(IEnumerable<string> input)
     {
         var result = 0UL;
 
@@ -61,7 +61,7 @@ public record Day02() : Solver(AnswerOne: "44487518055", AnswerTwo: "53481866137
             }
         });
 
-        return result.ToString();
+        return result;
     }
 
     private static bool HasRepeatingSequence(string s, int len)

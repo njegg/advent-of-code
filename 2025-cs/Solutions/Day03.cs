@@ -17,22 +17,20 @@ public record Day03() : Solver(AnswerOne: "17311", AnswerTwo: "171419245422055")
         return max + FindBestBatteries(line[(maxIndex + 1)..], len - 1);
     }
 
-    public override string PartOne(IEnumerable<string> input)
+    public override Solution PartOne(IEnumerable<string> input)
     {
         return input
             .Select(line => FindBestBatteries(line.ToCharArray(), 2))
             .Select(long.Parse)
-            .Sum()
-            .ToString();
+            .Sum();
     }
 
-    public override string PartTwo(IEnumerable<string> input)
+    public override Solution PartTwo(IEnumerable<string> input)
     {
         return input
             .Select(line => FindBestBatteries(line.ToCharArray(), 12))
             .Select(long.Parse)
-            .Sum()
-            .ToString();
+            .Sum();
     }
 
 

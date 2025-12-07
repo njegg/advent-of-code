@@ -101,7 +101,12 @@ internal static class Program
         var input = ReadInput(o);
         var answer = o.Part == 1 ? solver.AnswerOne : solver.AnswerTwo;
 
-        Func<List<string>, string> partSolver = o.Part == 1
+        if (solver.Simulate)
+        {
+            Console.CursorVisible = false;
+        }
+
+        Func<List<string>, Solution> partSolver = o.Part == 1
             ? solver.PartOne
             : solver.PartTwo;
 
@@ -113,7 +118,7 @@ internal static class Program
 
         _totalTime += timeInMs;
 
-        var isCorrect = answer == result;
+        var isCorrect = answer == result.Value;
 
         if (o is { Part: 1 } or { Part: 2, Single: true })
         {
@@ -138,6 +143,7 @@ internal static class Program
 
         Console.ResetColor();
         Console.WriteLine();
+        Console.CursorVisible = true;
     }
 
     private static Solver GetSolverInstance(Options o)

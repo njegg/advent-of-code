@@ -6,12 +6,12 @@ namespace _2025_cs.Solutions;
 
 public record Day00() : Solver(AnswerOne: null, AnswerTwo: null)
 {
-    public override string PartOne(IEnumerable<string> input)
+    public override Solution PartOne(IEnumerable<string> input)
     {
         return "";
     }
 
-    public override string PartTwo(IEnumerable<string> input)
+    public override Solution PartTwo(IEnumerable<string> input)
     {
         return "";
     }

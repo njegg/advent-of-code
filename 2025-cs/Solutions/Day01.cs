@@ -6,7 +6,7 @@ namespace _2025_cs.Solutions;
 
 public record Day01() : Solver(AnswerOne: "1150", AnswerTwo: "6738")
 {
-    public override string PartOne(IEnumerable<string> input)
+    public override Solution PartOne(IEnumerable<string> input)
     {
         var result = 0;
 
@@ -22,7 +22,7 @@ public record Day01() : Solver(AnswerOne: "1150", AnswerTwo: "6738")
         return result.ToString();
     }
 
-    public override string PartTwo(IEnumerable<string> input)
+    public override Solution PartTwo(IEnumerable<string> input)
     {
         var result = 0;
 
